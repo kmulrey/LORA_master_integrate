@@ -1,0 +1,4 @@
+#Ignore this line
+#StaName   IPV4    port_1    port_2    spare_port
+lasa1   192.168.88.1    3301    3302    3303
+lasa2   192.168.88.1    3301    3302    3303

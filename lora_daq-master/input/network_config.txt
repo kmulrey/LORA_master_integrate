@@ -1,0 +1,15 @@
+# TCP/IP Network Settings for all LORA Stations.
+# LORA Main PC also included in here.
+# direction of flow of information: client <--> host ---> superhost.
+# Also new stations will be included here.
+# port_1 and port_2 are port numbers they would occupy on host .
+# Name   Type   IPV4    port_1    port_2    HISPARC_Serial_m    HISPARC_Serial_s
+lora    host    192.168.88.1    xxxx    xxxx    xxxxxxxx    xxxxxxxx
+lasa1   clientv1    192.168.88.2    3301    3302    FTQZTB7R    FTRCDY18
+lasa2   clientv1    192.168.88.3    3303    3304    FTRCDXB3    FTRCDXM1
+lasa3   clientv1    192.168.88.4    3305    3306    FTRCDX3M    FTQSEUA3
+lasa4   clientv1    192.168.88.5    3307    3308    FTR0IKDA    FTRCDWZZ
+lasa5   clientv1    192.168.88.6    3309    3310    FTRCDXXE    FTU80USR
+lasa6   clientv2    192.168.40.1    3311    3312    FTRCDXXE    FTU80USR
+lofar   superhost   10.149.64.155    31660    xxxx    xxxxxxxx    xxxxxxxx
+#

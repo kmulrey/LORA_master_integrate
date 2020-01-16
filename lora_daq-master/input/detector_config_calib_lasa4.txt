@@ -1,0 +1,43 @@
+# contains configuration of the detector during this run.
+# keyword    value0    value1    value2    ...
+# active_stations   list all active stations with 2 tabs in between them.
+# complete list: lasa1 , lasa2, lasa3, lasa4, lasa5
+# lofar_trig_mode : 1: LORA stations 2: LORA detectors - > FOR LOFAR. Not LORA trigger.
+# lofar_trig_condition : Min no. of LORA Stations/Detectors required to send trigger to LOFAR
+# lora_trig_mode : 1: LORA stations 2: LORA detectors - > FOR LORA.
+# lora trig condition : Minimum no. of detectors / station.
+# calibration_mode: 0 for none / 1 for electronics calibration mode / 2 for det calib mode.
+# log_interval: in ms. period for storing log tree. i.e. threshold, mean_baseline, mean_sigma
+# check_coinc_interval: in ms. previously event_spy_time. time period to check for coincidence in events stored in the buffer.
+# coin_window : Coincidence time window in nanosecs for hits to belong to same event
+# reset_thresh_interval : store noise data and reset threshold every 20 mins. in ms.
+# wvfm_process_wpre : n bins before peak to include in window (total trace is 4000)
+# wvfm_process_wpost :  n bins after peak to include in window (total trace is 4000)
+# wvfm_process_offtwlen : n bins off window to include for baseline. (total trace is 4000)
+# diagnostics_interval: interval for printing out to diagnostics file 30000 ms i.e. 30 s for now.
+# sigma_ovr_thresh: for new threshold every hour. default value 5 for now.
+# init_reset_thresh_interval: the first time has to be within 2 mins of daq start.
+# output_save_hour: hour of the day when current o/p files are closed and new ones opened.
+# tbb_dump_wait_min: min interval between two consecutive radio triggers.
+active_stations   lasa4
+calibration_mode    2
+list_of_dets_for_calib
+lofar_trig_mode   2
+lofar_trig_cond   26
+lora_trig_mode  1
+lora_trig_cond  1
+reset_thresh_interval 30000
+init_reset_thresh_interval 5000
+log_interval    3600000
+check_coinc_interval   50
+output_path   /home/hpandya/lora_daq/muon_calib/
+output_save_hour 23
+coin_window 400
+wvfm_process_wpre 25
+wvfm_process_wpost 135
+wvfm_process_offtwlen 100
+diagnostics_interval 20000
+sigma_ovr_thresh 9
+tbb_dump_wait_min 6
+osm_store_interval 600
+EOF

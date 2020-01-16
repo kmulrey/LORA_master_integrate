@@ -6,10 +6,15 @@
 	objectVersion = 50;
 	objects = {
 
+/* Begin PBXFileReference section */
+		411CF78D239E837A001F4DB5 /* lora_daq-master */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "lora_daq-master"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
 /* Begin PBXGroup section */
 		411CF786239E8370001F4DB5 = {
 			isa = PBXGroup;
 			children = (
+				411CF78D239E837A001F4DB5 /* lora_daq-master */,
 			);
 			sourceTree = "<group>";
 		};
