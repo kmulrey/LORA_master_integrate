@@ -157,9 +157,14 @@ private:
 
   void Read_Detector_File(const std::string);
   void Read_Det_Coord_File(const std::string);
+    
 
   void Read_Network_File(const std::string);
   void Read_ControlParam_File(const std::string);
+  void Read_ControlParam_File_V2_det(const std::string); //katie
+  void Read_ControlParam_File_V2_stn(const std::string); //katie
+
+
   void Init_LORA_Array();
 
   void Init_Final_Containers();

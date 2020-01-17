@@ -149,6 +149,8 @@ void OPERATIONS::Init(const std::string net_file,
   current_check_coinc_interval=detector_config.check_coinc_interval;
   
   Read_ControlParam_File(cp_file);
+  Read_ControlParam_File_V2_det(cp_file_V2_det); //katie
+
   /*
   Read_Det_Coord_File(det_coord_file);
 
@@ -1074,6 +1076,92 @@ void OPERATIONS::Read_ControlParam_File(const std::string fname)
   std::string retnval = verify_init_control_params(network_config);
   if (retnval!="") throw std::runtime_error(retnval);
 }
+
+
+void OPERATIONS::Read_ControlParam_File_V2_det(const std::string fname) //katie
+{
+    /*
+     Control Param File Structure:
+     # COMMENT CHAR IS hash sign
+     # NAME Digitizer  <line contd...>
+     lasa, det#, HV, pre_coin_time, post_coin_time,gain_correction, offset_correction, integration_time, base_max, base_min, sig_T1, sig_T2, Tprev, Tper, TCmax, NCmax, NCmin, Qmax,Qmin
+     ....
+     
+     */
+    std::string line;
+    std::ifstream infile;
+    
+    infile.open(fname);
+    
+    if (infile.fail())
+    {
+        throw std::runtime_error(fname+" : file open failed.");
+    }
+    
+    while (std::getline(infile, line))
+    {
+        if (line=="EOF") break;
+        if (line.size()==0) continue; // empty line
+        if (line.at(0)=='#') continue; // comment line
+        
+        unsigned short temp[40]; // for loading from stringstream
+        std::string lasa_name,det;
+        
+        
+        unsigned int det_no;
+        std::stringstream ss(line);
+        
+        ss >> lasa_name >>det;
+        std::cout<<lasa_name<<"  "<<det<<"\n";
+        
+        ss >> temp[0] >> temp[1] >> temp[2] >> temp[3] ;
+        ss >> temp[4] >> temp[5] >> temp[6] >> temp[7] ;
+        ss >> temp[8] >> temp[9] >> temp[10] >> temp[11];
+        ss >> temp[12] >> temp[13] >> temp[14] >> temp[15];
+        ss >> temp[16] >> temp[17];
+
+        
+        int found_in_network_config=0;
+        
+        for (int i=0;i<network_config.size();i++)
+        {
+            
+            if (network_config[i].name==lasa_name)
+            {
+                
+
+                found_in_network_config=1;
+                
+                memcpy(network_config[i].init_control_params_V2,temp,
+                       sizeof(network_config[i].init_control_params_V2));
+                break;
+                
+            }
+            
+        }
+
+    }
+    infile.close();
+    
+    //SANITY CHECK:check that HV does not exceed 1800
+    /*
+    std::string retnval = verify_init_control_params(network_config);
+    if (retnval!="") throw std::runtime_error(retnval);
+    */
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 void OPERATIONS::Init_LORA_Array()
 {

@@ -107,11 +107,12 @@ typedef std::vector<LOG_STRUCTURE> tLog_Station;
 struct STATION_INFO
 {
     std::string name=""; // lasa1, lasa2, lasa3,....
-		std::string type=""; // v1(old) or v2(new).
-    std::string port_1=""; // master(old/v1) or digitizer(new/v2)
-    std::string port_2=""; // slave(old/v1) or HV(new/v2)
+    std::string type=""; // v1(old) or v2(new).
+    std::string port_1=""; // master(old/v1) or digitizer_write(new/v2) //katie
+    std::string port_2=""; // slave(old/v1) or digitizer_Read(new/v2) //katie
+    std::string port_3=""; // empty(old/v1) or HV(new/v2) //katie
     std::string IPV4=""; // Self IPV4 address on network
-		int no=99; // station number
+    int no=99; // station number
 
     //only relevant for old stations. Set to zero for new.
     std::string HISPARC_Serial_m="";
@@ -119,6 +120,8 @@ struct STATION_INFO
 
 		unsigned short init_control_params_m[40];
 		unsigned short init_control_params_s[40];
+        unsigned short init_control_params_V2[40]; //katie
+
 };
 
 struct DETECTOR_CONFIG{

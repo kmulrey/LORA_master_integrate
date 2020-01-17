@@ -9,8 +9,8 @@ OPERATIONS lora_daq;
   lora_daq.Init("../input/network_config.txt",
            "../input/detector_config.txt",
            "../input/init_control_params.txt",
-           "../input/init_control_params.txt", //katie
-           "../input/init_control_params.txt", //katie
+           "../input/init_control_params_V2_det.txt", //katie
+           "../input/init_control_params_V2_stn.txt", //katie
            "../daq_managers/daq_execution_status_file.txt",
            "../input/detector_coord.txt");
  
