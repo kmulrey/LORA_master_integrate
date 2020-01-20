@@ -160,11 +160,11 @@ void OPERATIONS::Init(const std::string net_file,
   Set_Output_File_Names_And_RunId();
 
   Init_LORA_Array();
-  /*
+  
   Init_Final_Containers();
 
   Open_ROOT_File();
-  */
+  
   return;
 }
 
@@ -174,15 +174,15 @@ void OPERATIONS::Connect_To_Stations()
   {
     lora_array_ptrs[i]->Open(); // will in turn do open/bind/Accept for all sockets.
   }
-
   int lofar_nc_index;
   for (lofar_nc_index=0; lofar_nc_index<network_config.size();++lofar_nc_index)
   {if (network_config[lofar_nc_index].type=="superhost") break;}
 
-  std::unique_ptr<LOFAR_COMMS> temp_ptr(new LOFAR_COMMS);
-  lofar_radio_comm = std::move(temp_ptr);
-  lofar_radio_comm->Init(network_config[lofar_nc_index],detector_config);
-  lofar_radio_comm->Open();
+  //std::unique_ptr<LOFAR_COMMS> temp_ptr(new LOFAR_COMMS);
+  //lofar_radio_comm = std::move(temp_ptr);
+  //lofar_radio_comm->Init(network_config[lofar_nc_index],detector_config);
+  //lofar_radio_comm->Open();
+
   return;
 }
 
@@ -870,7 +870,7 @@ void OPERATIONS::Read_Network_File(const std::string fname)
     ss >> temp.name  >> temp.type >> temp.IPV4 >> temp.port_1 >> temp.port_2
      >>  temp.HISPARC_Serial_m >> temp.HISPARC_Serial_s;
 
-    if (temp.type=="clientv1")
+    if (temp.type=="clientv1"||temp.type=="clientv2") //katie
       temp.no = std::stoi(temp.name.substr(4,2));
     // 2 because lasa count can go upto 10 which has 2 digits
     network_config.push_back(temp);
@@ -1291,15 +1291,14 @@ void OPERATIONS::Init_LORA_Array()
         std::unique_ptr<LORA_STATION_V2> temp_ptr(new LORA_STATION_V2);
         lora_array_ptrs.push_back(std::move(temp_ptr));
         //initialize the added member.
-        //(lora_array_ptrs.back())->Init(network_config[i],server_ip);
+        (lora_array_ptrs.back())->Init(network_config[i],server_ip);
       //throw std::runtime_error("clientv2 / LORA_STATION_V2 not yet defined.");//katie
     }
       
     //if STATION_INFO.type is neither of these two, do nothing.
   }
-    std::cout<<"makes it to here\n";
   //if no stations were found, throw error.
-    /*
+    
   if (lora_array_ptrs.size()==0)
   {
     std::stringstream ss;
@@ -1307,7 +1306,7 @@ void OPERATIONS::Init_LORA_Array()
     ss << "No active stations found";
     throw std::runtime_error(ss.str());
   }
-     */
+    
 }
 
 void OPERATIONS::Init_Final_Containers()

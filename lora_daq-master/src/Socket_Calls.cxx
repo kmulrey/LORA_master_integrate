@@ -79,7 +79,7 @@ SOCKET_CALLS::SOCKET_CALLS(const std::string& m_name, const std::string& m_port,
    for (p=addrList; p!=NULL; p=p->ai_next)
    {
       int temp_sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-
+      // std::cout<<p<<"\n";
       if (temp_sockfd==-1)
       {
           std::string errormsg="SOCKET_CALLS constructor says: socket() not found, will go to next addrinfo in addrList.";
@@ -211,6 +211,7 @@ void SOCKET_CALLS::Bind()
 
 	// in case socket was in use before, this will make it free without waiting for it to free up.
 	temp_val = setsockopt(sc_active_sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) ) ;
+    
 	if (temp_val==-1)
 	{
         Close(); // close sockets before failing the code. be nice.
@@ -221,6 +222,10 @@ void SOCKET_CALLS::Bind()
 
 	// bind to the now-free socket
     temp_val = bind(sc_active_sockfd,sc_addr.ai_addr, sc_addr.ai_addrlen);
+
+    std::cout<<"temp val: "<<temp_val<<"  "<<sc_addr.ai_addr->sa_data[5]<<"\n";
+
+    
 	if (temp_val==-1)
 	{
         Close(); // close sockets before failing the code. be nice.
@@ -228,6 +233,8 @@ void SOCKET_CALLS::Bind()
         errormsg+= std::string(std::strerror(errno));
 	    throw std::runtime_error(errormsg);
 	}
+    
+    
 }
 
 void SOCKET_CALLS::Listen()

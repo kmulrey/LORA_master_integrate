@@ -14,9 +14,9 @@ OPERATIONS lora_daq;
            "../daq_managers/daq_execution_status_file.txt",
            "../input/detector_coord.txt");
  
-  /*
+  
   lora_daq.Connect_To_Stations();
-
+  /*
   sleep(1);
 
   lora_daq.Accept_Connections_From_Stations();

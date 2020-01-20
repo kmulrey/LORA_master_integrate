@@ -18,6 +18,7 @@
 
 void LORA_STATION_V2::Init(const STATION_INFO& sta_info, const std::string& server_ip)
 {
+    
   if (sta_info.type!="clientv2")
   {
     std::stringstream ss;
@@ -31,35 +32,40 @@ void LORA_STATION_V2::Init(const STATION_INFO& sta_info, const std::string& serv
 
   port[0] = sta_info.port_1;
   port[1] = sta_info.port_2;
+    std::cout<<"port numbers: "<<port[0]<<"  "<<port[1]<<"\n";
 
   name = sta_info.name;
   station_no = sta_info.no;
   type = sta_info.type;
+    //std::cout<<"station number: "<<station_no<<"\n";
+    //std::cout<<"station name: "<<name<<"\n";
+    //std::cout<<"station type: "<<sta_info.type<<"\n";
 
-  HISPARC_Serial[0] = sta_info.HISPARC_Serial_m;
-  HISPARC_Serial[1] = sta_info.HISPARC_Serial_s;
+  //HISPARC_Serial[0] = sta_info.HISPARC_Serial_m;
+  //HISPARC_Serial[1] = sta_info.HISPARC_Serial_s;
 
   host_ip = server_ip;
+  std::cout<<"server_ip: "<<server_ip<<"\n";
 
   //load init control param to the container which will be sent to client
   //via the socket. Build_Hisparc_Messages converts unsigned short array
   //to unsigned char array , also doing transformations required to make
   //message readable by Hisparc Digitizers.
-  Build_Hisparc_Messages(sta_info.init_control_params_m, init_control_params[0]);
-  Build_Hisparc_Messages(sta_info.init_control_params_s, init_control_params[1]);
+  //Build_Hisparc_Messages(sta_info.init_control_params_m, init_control_params[0]);
+  //Build_Hisparc_Messages(sta_info.init_control_params_s, init_control_params[1]);
 
   //mVolts2ADC is 2
 
-  current_threshold_ADC[0]= (unsigned short) (sta_info.init_control_params_m[16] * 2);
-  current_threshold_ADC[1]= (unsigned short) (sta_info.init_control_params_m[18] * 2);
+  //current_threshold_ADC[0]= (unsigned short) (sta_info.init_control_params_m[16] * 2);
+  //current_threshold_ADC[1]= (unsigned short) (sta_info.init_control_params_m[18] * 2);
 
-  current_threshold_ADC[2]= (unsigned short) (sta_info.init_control_params_s[16] * 2);
-  current_threshold_ADC[3]= (unsigned short) (sta_info.init_control_params_s[18] * 2);
+  //current_threshold_ADC[2]= (unsigned short) (sta_info.init_control_params_s[16] * 2);
+  //current_threshold_ADC[3]= (unsigned short) (sta_info.init_control_params_s[18] * 2);
 
   //socket buffer: holds all incoming msgs.
   // it is frequently checked for a complete msg and msg is moved
   // from here to corresponding spool
-  unsigned int size_buf_sock= 10*event_msg_size + 10*onesec_msg_size + 1*cp_msg_size ;
+  unsigned int size_buf_sock= 10*event_msg_size + 10*onesec_msg_size + 1*cp_msg_size ; //katie: need to change sizes
   // buffer size = f(how fast you empty it, whats the event rate.)
 
   for (int i=0;i<2;i++)
@@ -81,13 +87,16 @@ void LORA_STATION_V2::Init(const STATION_INFO& sta_info, const std::string& serv
   idbit_and_msgsize.push_back(std::make_pair(onesec_msg_bit,onesec_msg_size)); //one sec msg
   idbit_and_msgsize.push_back(std::make_pair(event_msg_bit,event_msg_size));//event msg
   idbit_and_msgsize.push_back(std::make_pair(cp_msg_bit,cp_msg_size));//control parameters
+    
 }
 
 void LORA_STATION_V2::Open()
 {
+    std::cout<<"in V2 open\n";
   std::stringstream command, command2;
   //https://serverfault.com/questions/104668/create-screen-and-run-command-without-attaching
   //create a detached screen session:
+    /*
   command2 << "screen -dmS LORA" << station_no;
   system(command2.str().c_str());
 
@@ -97,18 +106,21 @@ void LORA_STATION_V2::Open()
 
 	std::cout << "Now starting LORA" << station_no << std::endl;
 	system(command.str().c_str());
-
-  for (int i=0;i<2;i++) //loop for master, slave.
+  */
+  for (int i=0;i<1;i++) //loop for master, slave. //katie-> loop over 1, only one socket
   {
     bool set_fd_to_nonblock = true;
     // so that we can read repeatedly from it, waiting for EWOULDBLOCK to stop reading.
     //https://eklitzke.org/blocking-io-nonblocking-io-and-epoll
     std::unique_ptr<SOCKET_CALLS> temp_ptr(new SOCKET_CALLS(host_ip, port[i],
                                               set_fd_to_nonblock));
+      std::cout<<"host_ip: "<<host_ip<<"  port: "<<port[i]<<"\n";
     socket[i] = std::move(temp_ptr);
     socket[i]->Open();
     socket[i]->Bind();
-    socket[i]->Listen();
+    //socket[i]->Listen();
+      
+      
     //socket[i]->Accept();
     // // a socket is defined by {SRC-IP, SRC-PORT, DEST-IP, DEST-PORT, PROTOCOL}
     // // src is client(lasa-client) and dest is host (lora main pc that hosts this code.)
@@ -123,11 +135,15 @@ void LORA_STATION_V2::Open()
     //select() on listening sockfd and then accept it. check. relay server doesn't
     //give spare socket as of now. so come to it later.
   }
+    std::cout<<"exiting V2 open\n";
+    
+
 }
 
-/*
+
 void LORA_STATION_V2::Send_Control_Params()
 {
+    /*
   for (int i=0;i<2;i++)
   {
     auto lenofbuffer = sizeof(init_control_params[i])/sizeof(init_control_params[i][0]);
@@ -136,10 +152,12 @@ void LORA_STATION_V2::Send_Control_Params()
     socket[i]->Send(init_control_params[i],lenofbuffer,bytes_sent,use_spare_socket);
     std::cout << "Control Params bytes sent: " << bytes_sent << std::endl;
   }
+    */
 }
 
 void LORA_STATION_V2::Send_Electronics_Calib_Msg()
 {
+    /*
   unsigned char dat[4] ;
 	dat[0]=0x99 ;
 	dat[1]=0x30 ;
@@ -154,12 +172,14 @@ void LORA_STATION_V2::Send_Electronics_Calib_Msg()
     socket[i]->Send(dat,lenofbuffer,bytes_sent,use_spare_socket);
     std::cout << "Electronics calib msg bytes sent: " << bytes_sent << std::endl;
   }
+ */
 }
 
 void LORA_STATION_V2::Receive_Electronics_Calib_Msg(int& detectors_calibrated,
                                                     const std::string& ecalib_fname,
                                                     const STATION_INFO& sta_info)
 {
+    /*
   for (int i=0;i<2;i++)
   {
     std::string m_or_s = (i==0) ? "Master" : "Slave" ;
@@ -227,6 +247,7 @@ void LORA_STATION_V2::Receive_Electronics_Calib_Msg(int& detectors_calibrated,
       outfile.close();
     }
   }
+    */
   return;
 }
 
@@ -234,6 +255,7 @@ void LORA_STATION_V2::Add_readfds_To_List(fd_set& active_read_fds, int& max_fd_v
 {
   //each station should add using FD_SET to active_stations_fds
   //and replace value in max_fd_val if one of its fds has a higher value.
+/*
   for (int i=0;i<2;i++)
   {
     FD_SET(socket[i]->sc_active_sockfd, &active_read_fds);
@@ -248,10 +270,12 @@ void LORA_STATION_V2::Add_readfds_To_List(fd_set& active_read_fds, int& max_fd_v
     //                         socket[i]->sc_active_spare_sockfd});
     // }
   }
+ */
 }
 
 int LORA_STATION_V2::Accept(fd_set& fd_list)
 {
+  /*
   int n_accepted_connections = 0;
   for (int i=0;i<2;i++) // master, slave. 2 sockets.
   {
@@ -275,10 +299,13 @@ int LORA_STATION_V2::Accept(fd_set& fd_list)
     }
   }
   return n_accepted_connections;
+    */
+    return 0;
 }
 
 void LORA_STATION_V2::Listen(fd_set& fd_list)
 {
+  /*
   for (int m_or_s=0; m_or_s<2; m_or_s++) // master, slave. 2 sockets.
   {
     if (!FD_ISSET(socket[m_or_s]->sc_active_sockfd, &fd_list)) continue;
@@ -299,11 +326,13 @@ void LORA_STATION_V2::Listen(fd_set& fd_list)
       std::cout << port[m_or_s] << ":  " << errormsg << std::endl;
     }
   }
+ */
 }
-*/
-/*
+
+
 void LORA_STATION_V2::Interpret_And_Store_Incoming_Msgs(tm& rs_time)
 {
+  /*
   //printf("Value of header_bit: Hex: %X, Decimal: %d\n",header_bit,header_bit);
   for (int im_or_s=0; im_or_s<2; ++im_or_s) //master and slave loop.
   {
@@ -338,12 +367,12 @@ void LORA_STATION_V2::Interpret_And_Store_Incoming_Msgs(tm& rs_time)
       bufsize=buf_socket[im_or_s]->Get_Buffer_Size();
     }
   }
+ */
 }
-*/
-          
-/*
+
 void LORA_STATION_V2::Send_Event_Spool_Info(tvec_EVENT_SPOOL_SUMMARY& v)
 {
+  /*
   bool all_spools_empty=true;
   for (int i=0; i<4; ++i)
   {
@@ -380,11 +409,12 @@ void LORA_STATION_V2::Send_Event_Spool_Info(tvec_EVENT_SPOOL_SUMMARY& v)
       v.push_back(temp);
     }
   }
+    */
 }
-*/
-/*
+
 void LORA_STATION_V2::Discard_Events_From_Spool(const tvec_EVENT_SPOOL_SUMMARY& event_vec)
 {
+    /*
   for (int k=0; k<event_vec.size(); ++k)
   {
     if (name!=event_vec[k].station_name) continue;
@@ -396,9 +426,9 @@ void LORA_STATION_V2::Discard_Events_From_Spool(const tvec_EVENT_SPOOL_SUMMARY& 
 
     event_spool[i].erase(event_spool[i].begin() + j);
   }
+    */
 }
-*/
-/*
+
 void LORA_STATION_V2::Send_Event_Data(tEvent_Data_Station& station_data,
                                       const tvec_EVENT_SPOOL_SUMMARY& event_vec)
 {
@@ -406,7 +436,7 @@ void LORA_STATION_V2::Send_Event_Data(tEvent_Data_Station& station_data,
   //otherwise sends an empty station back.
   //this is called only if a station is active.
   //(obvious because inactive station class instance of LORA_STATION_V1 won't even be generated.)
-
+/*
   for (int i=0; i<4; ++i)
   {
     station_data.push_back(EVENT_DATA_STRUCTURE());
@@ -437,12 +467,13 @@ void LORA_STATION_V2::Send_Event_Data(tEvent_Data_Station& station_data,
     std::cout << "station did not contribute 4 ch's to event. " ;
     std::cout << n_replaced << " ch's were provided." << std::endl;
   }
+    */
 }
-*/
-/*
+
 void LORA_STATION_V2::Send_OSM_Delete_From_Spool(ONE_SEC_STRUCTURE& osm_master,
                                                  ONE_SEC_STRUCTURE& osm_slave)
 {
+  /*
   if (osm_spool[0].size()>0)
   {
     osm_master = osm_spool[0][0];
@@ -453,10 +484,12 @@ void LORA_STATION_V2::Send_OSM_Delete_From_Spool(ONE_SEC_STRUCTURE& osm_master,
     osm_slave = osm_spool[1][0];
     osm_spool[1].erase(osm_spool[1].begin());
   }
+   */
 }
 
 void LORA_STATION_V2::Send_Log(tLog_Station& noise_station_vec)
 {
+    /*
   for (int i=0; i<4; ++i)
   {
     float avg_mean = std::accumulate(hundred_means[i].begin(),
@@ -481,13 +514,14 @@ void LORA_STATION_V2::Send_Log(tLog_Station& noise_station_vec)
 
     noise_station_vec.push_back(temp);
   }
+     */
 }
-*/
-/*
+
 void LORA_STATION_V2::Calculate_New_Threshold(DETECTOR_CONFIG& dc,
                                               const tm& rs_time,
                                               int& current_reset_thresh_interval)
 {
+ /*
   int avg_over_dt= 60*60*1000; // ms
 
   std::tm *t = Get_Current_Time();
@@ -546,11 +580,12 @@ void LORA_STATION_V2::Calculate_New_Threshold(DETECTOR_CONFIG& dc,
       std::cout << "reducing thresh for " << name << " " << i << std::endl;
     }
   }
+   */
 }
- */
-/*
+
 void LORA_STATION_V2::Close()
 {
+    /*
 	unsigned char dat[3] ;
 	dat[0]=0x99 ;
 	dat[1]=0xAA ;		//We have used identifier 'AA' for stopping DAQ in LORA
@@ -575,14 +610,15 @@ void LORA_STATION_V2::Close()
   std::cout << "Ending screen session: LORA" << station_no << std::endl;
 	system(command.str().c_str());
   sleep(1);
+     */
 }
-*/
-/*
+
 void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned char>& msg,
                                                       const std::string& m_or_s,
                                                       const int& m_or_s_int,
                                                       const tm& rs_time)
 {
+  /*
 
   if (m_or_s!="Master" && m_or_s!="Slave")
   {
@@ -703,13 +739,14 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
       event_spool[2+i].push_back(std::make_pair(event[i],time_stamp));
     }
   }
+    */
 }
  
-*/
-/*
+
 
 void LORA_STATION_V2::Update_current_CTP(const int& m_or_s)
 {
+ /*
   if (osm_spool[m_or_s].size()==0)
   {
     std::string errormsg="No OSM MSG FOUND TO PULL CTP FROM...";
@@ -719,13 +756,16 @@ void LORA_STATION_V2::Update_current_CTP(const int& m_or_s)
   //called after Unpack_OSM_Msg_Store_To_Spool is called.
   int last_element = osm_spool[m_or_s].size() -1 ;
   current_CTP[m_or_s] = osm_spool[m_or_s][last_element].CTP;
+ */
 }
-*/
-/*
+
+
+
 void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned char>& msg,
                                    const int& m_or_s,
                                    tm& rs_time)
 {
+  /*
   ONE_SEC_STRUCTURE osm;
   std::stringstream ss22(name.substr(4,1));
   ss22 >> osm.Lasa;
@@ -784,26 +824,25 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
     t.tm_year=year ;
     rs_time = t;
   }
-
-}
 */
-/*
- 
+}
+
 std::string LORA_STATION_V2::Send_Name()
 {
   return name;
 }
-*/
 
-/*
+
+
  
 void LORA_STATION_V2::Process_Event_Spool_Before_Coinc_Check(DETECTOR_CONFIG& det_config,
                                                             int& wait_another_iteration)
 {
+    
   // Calculate properties for all traces present
   // in the event_spool - before they are forwarded to OPERATIONS
   // class for event forming and eventually discarded.
-
+ /*
   for (int i=0; i<4; ++i)
   {
     for (int j=0;j<event_spool[i].size();++j)
@@ -889,15 +928,14 @@ void LORA_STATION_V2::Process_Event_Spool_Before_Coinc_Check(DETECTOR_CONFIG& de
   //if request had been made 3 times already, set counter 0 and move on.
   // or if it has never been made before... set it 0 anyway.
   request_OPS_to_wait_another_iteration=0;
-
+ */
   return;
 }
-*/
-/*
+
 void LORA_STATION_V2::Unpack_CP_Msg_Update_Threshold(const std::vector<unsigned char>& msg,
                                   const std::string& m_or_s)
 {
-
+  /*
   if (m_or_s!="Master" && m_or_s!="Slave")
   {
     std::stringstream ss;
@@ -997,11 +1035,12 @@ void LORA_STATION_V2::Unpack_CP_Msg_Update_Threshold(const std::vector<unsigned 
 
   current_threshold_ADC[temp_i+0]=cp[0].Channel_thres_low*2;
   current_threshold_ADC[temp_i+1]=cp[1].Channel_thres_low*2;
+   */
 }
- */
-/*
+
 void LORA_STATION_V2::Reset_Electronics()
 {
+    /*
 	unsigned char dat[3] ;
 	dat[0]=0x99 ;
 	dat[1]=0xff ;
@@ -1015,13 +1054,14 @@ void LORA_STATION_V2::Reset_Electronics()
     socket[i]->Send(dat,lenofbuffer,bytes_sent,use_spare_socket);
     std::cout << "Reset Electronics Msg Sent. Size: " << bytes_sent << std::endl;
   }
+    */
 }
-*/
-/*
+
 void LORA_STATION_V2::Print_Detectors_Diagnostics(const std::string& diagnostics_fname,
                                         const DETECTOR_CONFIG& dcfg,
                                         const tm& rs_time)
 {
+    /*
   std::ofstream outfile;
   std::tm *t = Get_Current_Time();
   unsigned int GPS_time_stamp=(unsigned int)timegm(t) ;
@@ -1079,13 +1119,13 @@ void LORA_STATION_V2::Print_Detectors_Diagnostics(const std::string& diagnostics
   }
 
   outfile.close();
-
+ */
   return;
 }
-*/
-/*
+
 void LORA_STATION_V2::Set_New_Threshold()
 {
+    /*
   for (int i=0; i<2; ++i)
   {
     std::cout << name << ", " << i << ": " << current_threshold_ADC[0+2*i] << " "
@@ -1104,15 +1144,16 @@ void LORA_STATION_V2::Set_New_Threshold()
     bool use_spare=true;
     socket[i]->Send(dat,lenofbuffer, bytes_sent, use_spare);
   }
+  */
 }
-*/
-/*
+
 void LORA_STATION_V2::Status_Monitoring(bool& fatal_error, std::string& error_msg)
 {
   //fatal error is usually false before being passed to this method.
   //can be true if another instance of LORA_STATION_V1 had set it to true
   //before this station gets it. Then this station will provide additional
   //error_msg if any.
+    /*
   for (int i=0; i<2; ++i)
   {
     if (buf_socket[i]->Is_Buffer_Full())
@@ -1152,9 +1193,9 @@ void LORA_STATION_V2::Status_Monitoring(bool& fatal_error, std::string& error_ms
       error_msg += ss.str();
     }
   }
+     */
 }
-*/
-/*
+
 int LORA_STATION_V2::Get_Sum_Size_of_Spools()
 {
   int sum=0;
@@ -1180,4 +1221,4 @@ int LORA_STATION_V2::Get_Sum_Size_of_Spools()
 //   }
 // }
 
-*/
+

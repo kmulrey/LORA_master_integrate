@@ -29,11 +29,11 @@ public:
   virtual void Send_Control_Params() override;
 
   //Sends a small msg that tells lasa-client / digitzer to perform Electronics calibration
-  //virtual void Send_Electronics_Calib_Msg() override; //katie (not needed)
+  virtual void Send_Electronics_Calib_Msg() override; //katie (not needed)
 
   //Returns no of detectors for which electronics msg was received
-  //virtual void Receive_Electronics_Calib_Msg(int&, const std::string&,
-                                            //const STATION_INFO&) override; //katie (not needed)
+  virtual void Receive_Electronics_Calib_Msg(int&, const std::string&,
+                                            const STATION_INFO&) override; //katie (not needed)
 
   //each station should add using FD_SET to active_stations_fds
   //and replace value in max_fd_val if one of its fds has a higher value.
@@ -118,7 +118,7 @@ private:
   std::string name;
   int station_no;
   std::string type;
-  //std::string HISPARC_Serial[2]; // for master 0, slave 1 /katie
+  std::string HISPARC_Serial[2]; // for master 0, slave 1 /katie
   std::string host_ip; //ip address of LORA main PC.
   std::string port[2]; // port numbers, SOCKET_CALLS needs string.%s
   //Unsigned char is the format in which messages are sent over socket.

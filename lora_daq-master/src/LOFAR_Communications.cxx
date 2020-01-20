@@ -29,8 +29,8 @@ void LOFAR_COMMS::Init(const STATION_INFO& nc_LOFAR, const DETECTOR_CONFIG& dc)/
 void LOFAR_COMMS::Open()
 {
   Host_Addr_out.sin_family=AF_INET;
-	Host_Addr_out.sin_port=htons(port_number) ;
-	Host_Addr_out.sin_addr.s_addr=inet_addr(host_ip.c_str());
+  Host_Addr_out.sin_port=htons(port_number) ;
+  Host_Addr_out.sin_addr.s_addr=inet_addr(host_ip.c_str());
   std::memset(Host_Addr_out.sin_zero,'\0',sizeof Host_Addr_out.sin_zero);
   sockfd=socket(AF_INET,SOCK_DGRAM,0);
   if (sockfd==-1)
