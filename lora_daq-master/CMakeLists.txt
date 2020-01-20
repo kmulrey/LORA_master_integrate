@@ -46,7 +46,9 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 add_library(functionslib src/functions_library.cxx)
 add_library(buffer src/Buffer.cxx)
-add_library(lora SHARED src/LORA_STATION_V1.cxx src/LORA_STATION.cxx)
+add_library(lora SHARED src/LORA_STATION_V2.cxx src/LORA_STATION_V1.cxx src/LORA_STATION.cxx)
+#add_library(loraV2 SHARED src/LORA_STATION_V2.cxx src/LORA_STATION.cxx)
+
 add_library(operations src/OPERATIONS.cxx )
 add_library(socket_calls src/Socket_Calls.cxx)
 add_library(structs src/Structs.cxx)
@@ -57,9 +59,15 @@ add_executable(main_elec_calib src/main_elec_calib.cxx)
 
 if (APPLE)
 target_link_libraries(lora functionslib)
+#target_link_libraries(loraV2 functionslib)
+
 target_link_libraries(socket_calls functionslib)
 target_link_libraries(lora socket_calls)
+#target_link_libraries(loraV2 socket_calls)
+
 target_link_libraries(lora buffer)
+#target_link_libraries(loraV2 buffer)
+
 target_link_libraries(buffer functionslib)
 endif()
 

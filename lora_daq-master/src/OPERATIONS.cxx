@@ -1,6 +1,7 @@
 #include "OPERATIONS.h"
 #include "Structs.h"
 #include "LORA_STATION_V1.h"
+#include "LORA_STATION_V2.h"//katie
 #include "functions_library.h"
 #include <string>
 #include <fstream>
@@ -150,15 +151,16 @@ void OPERATIONS::Init(const std::string net_file,
   
   Read_ControlParam_File(cp_file);
   Read_ControlParam_File_V2_det(cp_file_V2_det); //katie
+  Read_ControlParam_File_V2_stn(cp_file_V2_stn); //katie
 
-  /*
+  
   Read_Det_Coord_File(det_coord_file);
-
+  
   //fix output filenames
   Set_Output_File_Names_And_RunId();
 
   Init_LORA_Array();
-
+  /*
   Init_Final_Containers();
 
   Open_ROOT_File();
@@ -828,9 +830,9 @@ void OPERATIONS::Read_Det_Coord_File(const std::string fname)
 
   infile.close();
 
-  if (det_coord_x.size()!=20 || det_coord_y.size()!=20)
+  if (det_coord_x.size()!=40 || det_coord_y.size()!=40)
   {
-    throw std::runtime_error("det coordinates are not 20.");
+    throw std::runtime_error("det coordinates are not 40."); //katie
   }
 }
 
@@ -1112,7 +1114,7 @@ void OPERATIONS::Read_ControlParam_File_V2_det(const std::string fname) //katie
         std::stringstream ss(line);
         
         ss >> lasa_name >>det;
-        std::cout<<lasa_name<<"  "<<det<<"\n";
+        //std::cout<<lasa_name<<"  "<<det<<"\n";
         
         ss >> temp[0] >> temp[1] >> temp[2] >> temp[3] ;
         ss >> temp[4] >> temp[5] >> temp[6] >> temp[7] ;
@@ -1132,8 +1134,27 @@ void OPERATIONS::Read_ControlParam_File_V2_det(const std::string fname) //katie
 
                 found_in_network_config=1;
                 
-                memcpy(network_config[i].init_control_params_V2,temp,
-                       sizeof(network_config[i].init_control_params_V2));
+                if (det=="1")
+                {
+                    memcpy(network_config[i].init_control_params_ch1,temp,
+                           sizeof(network_config[i].init_control_params_ch1));
+                }
+                if (det=="2")
+                {
+                    memcpy(network_config[i].init_control_params_ch2,temp,
+                           sizeof(network_config[i].init_control_params_ch2));
+                }
+                if (det=="3")
+                {
+                    memcpy(network_config[i].init_control_params_ch3,temp,
+                           sizeof(network_config[i].init_control_params_ch3));
+                }
+                if (det=="4")
+                {
+                    memcpy(network_config[i].init_control_params_ch4,temp,
+                           sizeof(network_config[i].init_control_params_ch4));
+                }
+           
                 break;
                 
             }
@@ -1142,17 +1163,71 @@ void OPERATIONS::Read_ControlParam_File_V2_det(const std::string fname) //katie
 
     }
     infile.close();
-    
-    //SANITY CHECK:check that HV does not exceed 1800
-    /*
-    std::string retnval = verify_init_control_params(network_config);
-    if (retnval!="") throw std::runtime_error(retnval);
-    */
 
 }
 
+void OPERATIONS::Read_ControlParam_File_V2_stn(const std::string fname) //katie
+{
 
+    std::string line;
+    std::ifstream infile;
+    
+    infile.open(fname);
+    
+    if (infile.fail())
+    {
+        throw std::runtime_error(fname+" : file open failed.");
+    }
+    
+    while (std::getline(infile, line))
+    {
+        if (line=="EOF") break;
+        if (line.size()==0) continue; // empty line
+        if (line.at(0)=='#') continue; // comment line
+        
+        unsigned short temp[40]; // for loading from stringstream
+        std::string lasa_name,det;
+        
+        
+        unsigned int det_no;
+        std::stringstream ss(line);
+        
+        ss >> lasa_name;
+        //std::cout<<lasa_name<<"\n";
+        
+        ss >> temp[0] >> temp[1] >> temp[2] >> temp[3] ;
+        ss >> temp[4] >> temp[5] >> temp[6] >> temp[7] ;
+        ss >> temp[8] >> temp[9] >> temp[10] >> temp[11];
+        ss >> temp[12] >> temp[13] >> temp[14] >> temp[15];
+       
+       
+        
+        int found_in_network_config=0;
+        
+        for (int i=0;i<network_config.size();i++)
+        {
+            
+            if (network_config[i].name==lasa_name)
+            {
+                found_in_network_config=1;
+                memcpy(network_config[i].init_control_params_stn,temp,
+                           sizeof(network_config[i].init_control_params_stn));
+            
+                break;
+                
+            }
+            
+        }
 
+        
+
+    }
+    
+    infile.close();
+    
+
+    
+}
 
 
 
@@ -1200,6 +1275,7 @@ void OPERATIONS::Init_LORA_Array()
 
     if (network_config[i].type=="clientv1")
     {
+
       //add a station of type V1.
       //lora_array_ptrs.push_back(std::make_unique<LORA_STATION_V1>());
       std::unique_ptr<LORA_STATION_V1> temp_ptr(new LORA_STATION_V1);
@@ -1207,14 +1283,23 @@ void OPERATIONS::Init_LORA_Array()
       //initialize the added member.
       (lora_array_ptrs.back())->Init(network_config[i],server_ip);
     }
+      
     else if (network_config[i].type=="clientv2")
     {
-      throw std::runtime_error("clientv2 / LORA_STATION_V2 not yet defined.");
+        //add a station of type V1.
+        //lora_array_ptrs.push_back(std::make_unique<LORA_STATION_V1>());
+        std::unique_ptr<LORA_STATION_V2> temp_ptr(new LORA_STATION_V2);
+        lora_array_ptrs.push_back(std::move(temp_ptr));
+        //initialize the added member.
+        //(lora_array_ptrs.back())->Init(network_config[i],server_ip);
+      //throw std::runtime_error("clientv2 / LORA_STATION_V2 not yet defined.");//katie
     }
+      
     //if STATION_INFO.type is neither of these two, do nothing.
   }
-
+    std::cout<<"makes it to here\n";
   //if no stations were found, throw error.
+    /*
   if (lora_array_ptrs.size()==0)
   {
     std::stringstream ss;
@@ -1222,6 +1307,7 @@ void OPERATIONS::Init_LORA_Array()
     ss << "No active stations found";
     throw std::runtime_error(ss.str());
   }
+     */
 }
 
 void OPERATIONS::Init_Final_Containers()
