@@ -1,0 +1,12 @@
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/main_muon_calib.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/lofar.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/structs.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/operations.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/main.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/lora.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/rebuild_cache.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/main_elec_calib.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/buffer.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/socket_calls.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/edit_cache.dir
+/Users/kmulrey/LOFAR/LORA/DAQ_test/DAQ_test/lora_daq-master/build/CMakeFiles/functionslib.dir

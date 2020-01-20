@@ -1,0 +1,8 @@
+# lasa, full scale enable, pps enable, daq enable, ch1 en, ch2 en, ch3 en, ch4 en, cal en, 10 sec en, ext en, ch1 readout en, ch2 readout en, ch3 readout en, ch4 readout en, triiger rate divider, coincidence readout time
+# some of these can go to channel level, but since they go in same FPGA list I put them all here for now
+
+lasa6   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
+lasa7   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
+lasa8   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
+lasa9   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
+lasa10   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
