@@ -55,7 +55,7 @@ SOCKET_CALLS::SOCKET_CALLS(const std::string& m_name, const std::string& m_port,
    sc_machine_name=m_name;
    sc_port_string=m_port;
    sc_nonblock = set_fd_to_nonblock;
-
+    std::cout<<"init: "<<sc_machine_name<<"  "<<sc_port_string<<"  "<<sc_nonblock<<"\n";
 
    //some temporary vars
    struct addrinfo addrCriteria, *addrList, *p ;
