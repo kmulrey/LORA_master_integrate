@@ -175,7 +175,7 @@ void OPERATIONS::Connect_To_Stations()
   {
     lora_array_ptrs[i]->Open(); // will in turn do open/bind/Accept for all sockets.
   }
-    std::cout<<"opened connection to stations\n";//katie
+    //std::cout<<"opened connection to stations\n";//katie
   int lofar_nc_index;
   for (lofar_nc_index=0; lofar_nc_index<network_config.size();++lofar_nc_index)
   {if (network_config[lofar_nc_index].type=="superhost") break;}
@@ -185,7 +185,7 @@ void OPERATIONS::Connect_To_Stations()
   //lofar_radio_comm = std::move(temp_ptr);
   //lofar_radio_comm->Init(network_config[lofar_nc_index],detector_config);
   //lofar_radio_comm->Open();
-  std::cout<<"exiting\n";//katie
+  //std::cout<<"exiting\n";//katie
 
   return;
 }
@@ -232,10 +232,10 @@ void OPERATIONS::Accept_Connections_From_Stations()
 
     // wait till one of them is ready for reading or until timeout.
     n_fds_ready = select(max_fd_val+1, &active_stations_fds, NULL, NULL, &timeout);
-
     if (n_fds_ready<0)
     {//if select() throws an error:
       //printf("line: %d in: %s\n", __LINE__, __FILE__);
+
       std::string errormsg = "Error from select() under";
       errormsg+= " OPERATIONS::Listen_To_Stations(). ";
       errormsg+= std::string(std::strerror(errno));
@@ -250,7 +250,6 @@ void OPERATIONS::Accept_Connections_From_Stations()
       n_accepted_connections+= lora_array_ptrs[i]->Accept(active_stations_fds);
     }
 
-    std::cout << "accepted # connections: " << n_accepted_connections << std::endl;
   }
   return;
 }

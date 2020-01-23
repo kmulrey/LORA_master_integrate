@@ -120,7 +120,7 @@ void LORA_STATION_V2::Open()
 
 
     socket[i]->Listen();
-    socket[i]->Accept();
+    //socket[i]->Accept(); //katie: this accept needs to be here
     // // a socket is defined by {SRC-IP, SRC-PORT, DEST-IP, DEST-PORT, PROTOCOL}
     // // src is client(lasa-client) and dest is host (lora main pc that hosts this code.)
     // // as soon as connection is accepted by a socket, a diff sockfd is assigned.
@@ -134,7 +134,7 @@ void LORA_STATION_V2::Open()
     //select() on listening sockfd and then accept it. check. relay server doesn't
     //give spare socket as of now. so come to it later.
   }
-  std::cout<<"exiting V2 open\n"; //katie
+ // std::cout<<"exiting V2 open\n"; //katie
     
 
 }
@@ -187,7 +187,7 @@ void LORA_STATION_V2::Add_readfds_To_List(fd_set& active_read_fds, int& max_fd_v
 {
   //each station should add using FD_SET to active_stations_fds
   //and replace value in max_fd_val if one of its fds has a higher value.
-/*
+
   for (int i=0;i<2;i++)
   {
     FD_SET(socket[i]->sc_active_sockfd, &active_read_fds);
@@ -202,12 +202,12 @@ void LORA_STATION_V2::Add_readfds_To_List(fd_set& active_read_fds, int& max_fd_v
     //                         socket[i]->sc_active_spare_sockfd});
     // }
   }
- */
+ 
 }
 
 int LORA_STATION_V2::Accept(fd_set& fd_list)
 {
-  /*
+  
   int n_accepted_connections = 0;
   for (int i=0;i<2;i++) // master, slave. 2 sockets.
   {
@@ -222,16 +222,17 @@ int LORA_STATION_V2::Accept(fd_set& fd_list)
       ++n_accepted_connections;
       most_recent_msg_rcvd_time[i]=Get_Current_Time_chrono();
     }
-
+    /*
     if (!socket[i]->Get_Accept_Spare_Status())
     {
       socket[i]->Accept_Spare();
       ++n_accepted_connections;
       most_recent_msg_rcvd_time[i]=Get_Current_Time_chrono();
     }
+     */
   }
   return n_accepted_connections;
-    */
+    
     return 0;
 }
 

@@ -16,13 +16,12 @@ OPERATIONS lora_daq;
  
   
   lora_daq.Connect_To_Stations();
-  std::cout<<"test 1 \n"; //katie
- /*
-  sleep(1);
+ 
+  //sleep(1);//katie
   std::cout<<"Connected to stations"; //katie
   lora_daq.Accept_Connections_From_Stations();
   std::cout<<"accepted connection from stations"; //katie
-*/
+
   /*
   lora_daq.Send_Control_Params();
 
