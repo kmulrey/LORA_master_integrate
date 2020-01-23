@@ -170,18 +170,22 @@ void OPERATIONS::Init(const std::string net_file,
 
 void OPERATIONS::Connect_To_Stations()
 {
+
   for (int i=0; i<lora_array_ptrs.size();i++)
   {
     lora_array_ptrs[i]->Open(); // will in turn do open/bind/Accept for all sockets.
   }
+    std::cout<<"opened connection to stations\n";//katie
   int lofar_nc_index;
   for (lofar_nc_index=0; lofar_nc_index<network_config.size();++lofar_nc_index)
   {if (network_config[lofar_nc_index].type=="superhost") break;}
 
+  //katie: commented out, no test LOFAR connection
   //std::unique_ptr<LOFAR_COMMS> temp_ptr(new LOFAR_COMMS);
   //lofar_radio_comm = std::move(temp_ptr);
   //lofar_radio_comm->Init(network_config[lofar_nc_index],detector_config);
   //lofar_radio_comm->Open();
+  std::cout<<"exiting\n";//katie
 
   return;
 }
@@ -206,7 +210,8 @@ void OPERATIONS::Accept_Connections_From_Stations()
 {
   int n_stations = detector_config.active_stations.size();
   //FIXIT: the number of connections for clientv2 will be different.
-  int n_connections = n_stations * 2 * 2 ; // 2:master/slave, 2:spares
+  //int n_connections = n_stations * 2 * 2 ; // 2:master/slave, 2:spares
+  int n_connections = n_stations * 2 ; // 2:master/slave, 2:spares //katie
   int n_accepted_connections=0;
 
   while(n_accepted_connections<n_connections)
@@ -779,11 +784,16 @@ void OPERATIONS::End()
   std::cout << "End LORA DAQ.. FIXIT: make sure spools are empty" << std::endl;
   // std::cout << "if (all_hits.size()<event.size()+12) return; FIXIT" << std::endl;
   Close_ROOT_File();
+    
+  std::cout << "check 1\n";
   for (int i=0; i<lora_array_ptrs.size(); i++)
   {
+    std::cout << "check 2: "<<i<<"\n";
+
     lora_array_ptrs[i]->Close();
   }
-  lofar_radio_comm->Close();
+
+  //lofar_radio_comm->Close();//katie (never opened)
 }
 
 int OPERATIONS::Get_Sum_Size_of_Spools()
@@ -1136,23 +1146,24 @@ void OPERATIONS::Read_ControlParam_File_V2_det(const std::string fname) //katie
                 
                 if (det=="1")
                 {
-                    memcpy(network_config[i].init_control_params_ch1,temp,
-                           sizeof(network_config[i].init_control_params_ch1));
+                    memcpy(network_config[i].init_control_params_ch[0],temp,
+                           sizeof(network_config[i].init_control_params_ch[0]));
                 }
+                
                 if (det=="2")
                 {
-                    memcpy(network_config[i].init_control_params_ch2,temp,
-                           sizeof(network_config[i].init_control_params_ch2));
+                    memcpy(network_config[i].init_control_params_ch[1],temp,
+                           sizeof(network_config[i].init_control_params_ch[1]));
                 }
                 if (det=="3")
                 {
-                    memcpy(network_config[i].init_control_params_ch3,temp,
-                           sizeof(network_config[i].init_control_params_ch3));
+                    memcpy(network_config[i].init_control_params_ch[2],temp,
+                           sizeof(network_config[i].init_control_params_ch[2]));
                 }
                 if (det=="4")
                 {
-                    memcpy(network_config[i].init_control_params_ch4,temp,
-                           sizeof(network_config[i].init_control_params_ch4));
+                    memcpy(network_config[i].init_control_params_ch[3],temp,
+                           sizeof(network_config[i].init_control_params_ch[3]));
                 }
            
                 break;
@@ -1163,6 +1174,7 @@ void OPERATIONS::Read_ControlParam_File_V2_det(const std::string fname) //katie
 
     }
     infile.close();
+
 
 }
 

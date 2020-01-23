@@ -120,10 +120,7 @@ struct STATION_INFO
 
 		unsigned short init_control_params_m[40];
 		unsigned short init_control_params_s[40];
-        unsigned short init_control_params_ch1[40]; //katie
-        unsigned short init_control_params_ch2[40]; //katie
-        unsigned short init_control_params_ch3[40]; //katie
-        unsigned short init_control_params_ch4[40]; //katie
+        unsigned short init_control_params_ch[4][40]; //katie for
         unsigned short init_control_params_stn[40]; //katie
 
 

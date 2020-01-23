@@ -265,7 +265,7 @@ void SOCKET_CALLS::Listen()
         errormsg+= std::string(std::strerror(errno));
 	    throw std::runtime_error(errormsg);
 	}
-	std::cout << "Server says: Listen() Successful." << std::endl;
+	//std::cout << "Server says: Listen() Successful." << std::endl;
 }
 
 

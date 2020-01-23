@@ -124,6 +124,8 @@ private:
   //Unsigned char is the format in which messages are sent over socket.
   unsigned char init_control_params[2][40];
   unsigned short current_threshold_ADC[4];//ch1, ch2, ch3, ch4 //katie
+  //char Control_Messages[4][200] ; //katie
+  //char Control_Mode_Messages[200] ; //katie
   
   std::unique_ptr<SOCKET_CALLS> socket[2];
   std::unique_ptr<BUFFER> buf_socket[2];//initialize in init to 10mb: FIXIT

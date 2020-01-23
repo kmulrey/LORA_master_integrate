@@ -92,7 +92,6 @@ void LORA_STATION_V2::Init(const STATION_INFO& sta_info, const std::string& serv
 
 void LORA_STATION_V2::Open()
 {
-    std::cout<<"in V2 open\n";
   std::stringstream command, command2;
   //https://serverfault.com/questions/104668/create-screen-and-run-command-without-attaching
   //create a detached screen session:
@@ -107,21 +106,21 @@ void LORA_STATION_V2::Open()
 	std::cout << "Now starting LORA" << station_no << std::endl;
 	system(command.str().c_str());
   */
-  for (int i=0;i<1;i++) //loop for master, slave. //katie-> loop over 1, only one socket
+  for (int i=0;i<2;i++) //loop for master, slave. //katie-> loop over 1, only one socket
   {
     bool set_fd_to_nonblock = true;
     // so that we can read repeatedly from it, waiting for EWOULDBLOCK to stop reading.
     //https://eklitzke.org/blocking-io-nonblocking-io-and-epoll
     std::unique_ptr<SOCKET_CALLS> temp_ptr(new SOCKET_CALLS(host_ip, port[i],
                                               set_fd_to_nonblock));
-      std::cout<<"host_ip: "<<host_ip<<"  port: "<<port[i]<<"\n";
+    std::cout<<"host_ip: "<<host_ip<<"  port: "<<port[i]<<"\n";
     socket[i] = std::move(temp_ptr);
     socket[i]->Open();
     socket[i]->Bind();
-    //socket[i]->Listen();
-      
-      
-    //socket[i]->Accept();
+
+
+    socket[i]->Listen();
+    socket[i]->Accept();
     // // a socket is defined by {SRC-IP, SRC-PORT, DEST-IP, DEST-PORT, PROTOCOL}
     // // src is client(lasa-client) and dest is host (lora main pc that hosts this code.)
     // // as soon as connection is accepted by a socket, a diff sockfd is assigned.
@@ -135,7 +134,7 @@ void LORA_STATION_V2::Open()
     //select() on listening sockfd and then accept it. check. relay server doesn't
     //give spare socket as of now. so come to it later.
   }
-    std::cout<<"exiting V2 open\n";
+  std::cout<<"exiting V2 open\n"; //katie
     
 
 }
@@ -179,75 +178,8 @@ void LORA_STATION_V2::Receive_Electronics_Calib_Msg(int& detectors_calibrated,
                                                     const std::string& ecalib_fname,
                                                     const STATION_INFO& sta_info)
 {
-    /*
-  for (int i=0;i<2;i++)
-  {
-    std::string m_or_s = (i==0) ? "Master" : "Slave" ;
-    std::vector<unsigned char> msg;
-    msg = buf_socket[i]->extract_electronics_calib_msg_in_buf();
-    if (msg.size()==9)
-    {
-      std::cout << name << " " << i << msg.size() << std::endl;
-      detectors_calibrated++;
-      std::ofstream outfile;
-      outfile.open(ecalib_fname,std::fstream::app);
-      outfile << name //e.g. lasa1
-      << "\t" << m_or_s //e.g. Master
-      << "\t" << (unsigned int) msg[0] // CHANNEL_1_OFFSET+
-      << "\t" << (unsigned int) msg[1] // CHANNEL_1_OFFSET-
-      << "\t" << (unsigned int) msg[2] // CHANNEL_2_OFFSET+
-      << "\t" << (unsigned int) msg[3] // CHANNEL_2_OFFSET-
-      << "\t" << (unsigned int) msg[4] // CHANNEL_1_GAIN+
-      << "\t" << (unsigned int) msg[5] // CHANNEL_1_GAIN-
-      << "\t" << (unsigned int) msg[6] // CHANNEL_2_GAIN+
-      << "\t" << (unsigned int) msg[7] // CHANNEL_2_GAIN-
-      << "\t" << (unsigned int) msg[8] ; // COMMON_OFFSET_ADJ
-      if (i==0)
-      {
-        outfile
-        << "\t" << sta_info.init_control_params_m[9] // FULL_SCALE_ADJ
-        << "\t" << sta_info.init_control_params_m[10] // CHANNEL_1_INTE_TIME
-        << "\t" << sta_info.init_control_params_m[11] // CHANNEL_2_INTE_TIME
-        << "\t" << sta_info.init_control_params_m[12] // COMP_THRES_LOW
-        << "\t" << sta_info.init_control_params_m[13] // COMP_THRES_HIGH
-        << "\t" << sta_info.init_control_params_m[14] // CHANNEL_1_HV
-        << "\t" << sta_info.init_control_params_m[15] // CHANNEL_2_HV
-        << "\t" << sta_info.init_control_params_m[16] // CHANNEL_1_THRES_LOW
-        << "\t" << sta_info.init_control_params_m[17] // CHANNEL_1_THRES_HIGH
-        << "\t" << sta_info.init_control_params_m[18] // CHANNEL_2_THRES_LOW
-        << "\t" << sta_info.init_control_params_m[19] // CHANNEL_2_THRES_HIGH
-        << "\t" << sta_info.init_control_params_m[20] // TRIGG_CONDITION
-        << "\t" << sta_info.init_control_params_m[21] // PRE_COIN_TIME
-        << "\t" << sta_info.init_control_params_m[22] // COIN_TIME
-        << "\t" << sta_info.init_control_params_m[23] // POST_COIN_TIME
-        << "\t" << sta_info.init_control_params_m[24] // LOG_BOOK
-        << "\n" ;
-      }
-      else if (i==1)
-      {
-        outfile
-        << "\t" << sta_info.init_control_params_s[9] // FULL_SCALE_ADJ
-        << "\t" << sta_info.init_control_params_s[10] // CHANNEL_1_INTE_TIME
-        << "\t" << sta_info.init_control_params_s[11] // CHANNEL_2_INTE_TIME
-        << "\t" << sta_info.init_control_params_s[12] // COMP_THRES_LOW
-        << "\t" << sta_info.init_control_params_s[13] // COMP_THRES_HIGH
-        << "\t" << sta_info.init_control_params_s[14] // CHANNEL_1_HV
-        << "\t" << sta_info.init_control_params_s[15] // CHANNEL_2_HV
-        << "\t" << sta_info.init_control_params_s[16] // CHANNEL_1_THRES_LOW
-        << "\t" << sta_info.init_control_params_s[17] // CHANNEL_1_THRES_HIGH
-        << "\t" << sta_info.init_control_params_s[18] // CHANNEL_2_THRES_LOW
-        << "\t" << sta_info.init_control_params_s[19] // CHANNEL_2_THRES_HIGH
-        << "\t" << sta_info.init_control_params_s[20] // TRIGG_CONDITION
-        << "\t" << sta_info.init_control_params_s[21] // PRE_COIN_TIME
-        << "\t" << sta_info.init_control_params_s[22] // COIN_TIME
-        << "\t" << sta_info.init_control_params_s[23] // POST_COIN_TIME
-        << "\t" << sta_info.init_control_params_s[24] // LOG_BOOK
-        << "\n" ;
-      }
-      outfile.close();
-    }
-  }
-    */
+   
+   
   return;
 }
 
@@ -305,7 +237,7 @@ int LORA_STATION_V2::Accept(fd_set& fd_list)
 
 void LORA_STATION_V2::Listen(fd_set& fd_list)
 {
-  /*
+  
   for (int m_or_s=0; m_or_s<2; m_or_s++) // master, slave. 2 sockets.
   {
     if (!FD_ISSET(socket[m_or_s]->sc_active_sockfd, &fd_list)) continue;
@@ -326,7 +258,7 @@ void LORA_STATION_V2::Listen(fd_set& fd_list)
       std::cout << port[m_or_s] << ":  " << errormsg << std::endl;
     }
   }
- */
+ 
 }
 
 
@@ -585,23 +517,26 @@ void LORA_STATION_V2::Calculate_New_Threshold(DETECTOR_CONFIG& dc,
 
 void LORA_STATION_V2::Close()
 {
-    /*
+    
 	unsigned char dat[3] ;
 	dat[0]=0x99 ;
 	dat[1]=0xAA ;		//We have used identifier 'AA' for stopping DAQ in LORA
 	dat[2]=0x66 ;
   auto lenofbuffer = sizeof(dat)/sizeof(dat[0]);
-
-  for (int i=0;i<2;i++)
+    std::cout<<"check 3\n";
+  for (int i=1;i<2;i++) //katie-> 1 for now to only use "send socket"
   {
+
     int bytes_sent = 0;
-    bool use_spare_socket=true;
+    bool use_spare_socket=false; //katie
     socket[i]->Send(dat,lenofbuffer,bytes_sent,use_spare_socket);
+
     socket[i]->Close();
   }
+    std::cout<<"check 4\n";
 
   sleep(2);
-
+/*   //katie, not using screens for now
   std::stringstream command;
   //run the command on the detached screen session:
 	command << "screen -S LORA" << station_no
@@ -609,8 +544,9 @@ void LORA_STATION_V2::Close()
 
   std::cout << "Ending screen session: LORA" << station_no << std::endl;
 	system(command.str().c_str());
+ */
   sleep(1);
-     */
+    
 }
 
 void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned char>& msg,

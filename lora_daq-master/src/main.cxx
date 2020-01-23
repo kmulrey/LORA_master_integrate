@@ -16,11 +16,14 @@ OPERATIONS lora_daq;
  
   
   lora_daq.Connect_To_Stations();
-  /*
+  std::cout<<"test 1 \n"; //katie
+ /*
   sleep(1);
-
+  std::cout<<"Connected to stations"; //katie
   lora_daq.Accept_Connections_From_Stations();
-
+  std::cout<<"accepted connection from stations"; //katie
+*/
+  /*
   lora_daq.Send_Control_Params();
 
   bool stay_in_loop=true;
@@ -71,8 +74,8 @@ OPERATIONS lora_daq;
     n_msgs_unsaved = new_value;
   }
   std::cout << std::endl<< "All spools are empty... have a good day!" << std::endl;
-
+*/
   lora_daq.End();
-   */
+
   return 0;
 }

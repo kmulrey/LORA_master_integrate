@@ -56,7 +56,7 @@ SOCKET_CALLS::SOCKET_CALLS(const std::string& m_name, const std::string& m_port,
    sc_port_string=m_port;
    sc_nonblock = set_fd_to_nonblock;
     std::cout<<"init: "<<sc_machine_name<<"  "<<sc_port_string<<"  "<<sc_nonblock<<"\n";
-
+ 
    //some temporary vars
    struct addrinfo addrCriteria, *addrList, *p ;
 
@@ -106,6 +106,7 @@ SOCKET_CALLS::SOCKET_CALLS(const std::string& m_name, const std::string& m_port,
 
    // free up the memory occupied by linked list of addrinfo structs.
    freeaddrinfo(addrList);
+  
 }
 
 
@@ -119,7 +120,9 @@ void SOCKET_CALLS::Open()
   All socket file descriptors are set to non blocking mode to allow
   for repeated reading from same socket until EWOULDBLOCK is returned in errno by read().
   */
-  sc_init_sockfd = socket(sc_addr.ai_family, sc_addr.ai_socktype, sc_addr.ai_protocol);
+  //sc_init_sockfd = socket(sc_addr.ai_family, sc_addr.ai_socktype, sc_addr.ai_protocol);
+  sc_init_sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
   if (sc_init_sockfd==-1)
   {
           std::string errormsg="Open() says: socket() fails. this shouldn't have happened. SOCKET_CALLS() constructor checks for this!";
@@ -211,6 +214,7 @@ void SOCKET_CALLS::Bind()
 
 	// in case socket was in use before, this will make it free without waiting for it to free up.
 	temp_val = setsockopt(sc_active_sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on) ) ;
+    sleep(5);
     
 	if (temp_val==-1)
 	{
@@ -221,10 +225,18 @@ void SOCKET_CALLS::Bind()
 	}
 
 	// bind to the now-free socket
+    /*
     temp_val = bind(sc_active_sockfd,sc_addr.ai_addr, sc_addr.ai_addrlen);
 
     std::cout<<"temp val: "<<temp_val<<"  "<<sc_addr.ai_addr->sa_data[5]<<"\n";
-
+   */
+    struct sockaddr_in address;
+    
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr =inet_addr(sc_machine_name.c_str());// INADDR_ANY;
+    address.sin_port = htons( std::atoi(sc_port_string.c_str()) );
+    // bind to the now-free socket
+    temp_val = bind(sc_active_sockfd,(struct sockaddr *)&address, sizeof(address));
     
 	if (temp_val==-1)
 	{
@@ -234,7 +246,7 @@ void SOCKET_CALLS::Bind()
 	    throw std::runtime_error(errormsg);
 	}
     
-    
+    //std::cout<<"leaving bind, value of temp: "<<temp_val<<"\n";
 }
 
 void SOCKET_CALLS::Listen()
@@ -243,8 +255,7 @@ void SOCKET_CALLS::Listen()
     Second Step for a Server after Open().
     you want to listen to init sock fd (active==init so far. not using active.)
     */
-    int BACKLOG= 1;//how many pending connections queue will hold
-
+    int BACKLOG= 5;//how many pending connections queue will hold
 	if(listen(sc_active_sockfd,BACKLOG)==-1)
 	{
         Close(); // close sockets before failing the code. be nice.
@@ -252,7 +263,7 @@ void SOCKET_CALLS::Listen()
         errormsg+= std::string(std::strerror(errno));
 	    throw std::runtime_error(errormsg);
 	}
-	// std::cout << "Server says: Listen() Successful." << std::endl;
+	 //std::cout << "Server says: Listen() Successful." << std::endl;
 }
 
 
@@ -263,7 +274,8 @@ void SOCKET_CALLS::Accept()
 	addr_size=sizeof their_addr ;
 
 	sc_listening_sockfd=accept(sc_active_sockfd,(struct sockaddr*) &their_addr,&addr_size);
-
+    
+    
 	if(sc_listening_sockfd==-1)
 	{
         Close(); // close sockets before failing the code. be nice.
@@ -283,6 +295,7 @@ void SOCKET_CALLS::Accept()
     int temp_flags = fcntl(sc_active_sockfd, F_GETFL,0);
     fcntl(sc_active_sockfd, F_SETFL, temp_flags | O_NONBLOCK);
   }
+     
 }
 
 void SOCKET_CALLS::Accept_Spare()
