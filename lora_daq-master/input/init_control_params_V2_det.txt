@@ -1,4 +1,4 @@
-# lasa, det#, HV, pre_coin_time, post_coin_time,gain_correction, offset_correction, integration_time, base_max, base_min, sig_T1, sig_T2, Tprev, Tper, TCmax, NCmax, NCmin, Qmax,Qmin
+# lasa, det#, HV, trigger, pre_coin_time, post_coin_time,gain_correction, offset_correction, integration_time, base_max, base_min, sig_T1, sig_T2, Tprev, Tper, TCmax, NCmax, NCmin, Qmax,Qmin
 lasa6   1   1766    500 240 16297   10  127 10240   6144    20  10  10  1   255 255 255 0   0
 lasa6   2   1612    500 240 16297   10  127 10240   6144    20  10  10  1   255 255 255 0   0
 lasa6   3   1319    500 240 16297   10  127 10240   6144    20  10  10  1   255 255 255 0   0

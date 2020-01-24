@@ -784,10 +784,8 @@ void OPERATIONS::End()
   // std::cout << "if (all_hits.size()<event.size()+12) return; FIXIT" << std::endl;
   Close_ROOT_File();
     
-  std::cout << "check 1\n";
   for (int i=0; i<lora_array_ptrs.size(); i++)
   {
-    std::cout << "check 2: "<<i<<"\n";
 
     lora_array_ptrs[i]->Close();
   }
@@ -1209,7 +1207,7 @@ void OPERATIONS::Read_ControlParam_File_V2_stn(const std::string fname) //katie
         ss >> temp[0] >> temp[1] >> temp[2] >> temp[3] ;
         ss >> temp[4] >> temp[5] >> temp[6] >> temp[7] ;
         ss >> temp[8] >> temp[9] >> temp[10] >> temp[11];
-        ss >> temp[12] >> temp[13] >> temp[14] >> temp[15];
+        ss >> temp[12] >> temp[13] >> temp[14] >> temp[15] >> temp[16];
        
        
         

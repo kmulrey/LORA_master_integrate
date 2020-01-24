@@ -18,13 +18,14 @@ OPERATIONS lora_daq;
   lora_daq.Connect_To_Stations();
  
   //sleep(1);//katie
-  std::cout<<"Connected to stations"; //katie
+  //std::cout<<"Connected to stations"; //katie
   lora_daq.Accept_Connections_From_Stations();
-  std::cout<<"accepted connection from stations"; //katie
+  //std::cout<<"accepted connection from stations"; //katie
 
-  /*
+  
   lora_daq.Send_Control_Params();
-
+   
+ /*
   bool stay_in_loop=true;
   while(stay_in_loop)
   {

@@ -202,6 +202,114 @@ void Check_HV(const unsigned short tHV,std::string ch_name)
   }
 }
 
+void Build_V2_Stn_Messages(const unsigned short* cp, unsigned char* new_cp)//katie
+{
+    // (0) triger condition, (1) full scale enable, (2) pps enable, (3) daq enable, (4) ch1 en, (5) ch2 en, (6) ch3 en, (7) ch4 en, (8) cal en, (9) 10 sec en, (10) ext en, (11) ch1 readout en, (12) ch2 readout en, (13) ch3 readout en, (14) ch4 readout en, (15) triger rate divider, (16) coincidence readout time
+    //CONTROL REGISTER -> 2 bits
+   
+    new_cp[0]=((unsigned short)0x99);  // start message
+    new_cp[1]=((unsigned short)0x21);  //identifier
+    
+    //CONTROL REGISTER -> 2 bits
+    unsigned short control=0;
+    control= (cp[1]<<2) | (cp[2]<<1)| (cp[3]<<0);
+    
+    new_cp[2]=((unsigned short)(control) & 0xff00)>>8 ;
+    new_cp[3]=((unsigned short)(control) & 0x00ff) ;
+
+    
+    //TRIGGER ENABLE MASK-> 2 bits
+    unsigned short trigger=0;
+    trigger= (cp[7]<<11) | (cp[6]<<10)| (cp[5]<<9)|(cp[4]<<8)|(cp[8]<<6)|(cp[9]<<5)|(cp[10]<<4);
+    //printf("%x\n",trigger);
+    new_cp[4]=((unsigned short)(trigger) & 0xff00)>>8 ;
+    new_cp[5]=((unsigned short)(trigger) & 0x00ff) ;
+    
+    
+    //CHANNEL READOUT -> 1 bits, TRIGGER RATE DIVIDER
+    unsigned short chan=0;
+    unsigned short rate=0;
+    
+    chan= (cp[14]<<3) | (cp[13]<<2)| (cp[12]<<1)|(cp[11]<<0);
+    //printf("%x\n",chan);
+    rate=cp[15];
+    
+    
+    new_cp[6]=rate;
+    new_cp[7]=chan;
+    
+    
+    //COMMON COIN READOUT TIME -> 2 bits
+    unsigned short coin=0;
+    coin=cp[16]/5;
+    new_cp[8]=((unsigned short)(coin) & 0xff00)>>8 ;
+    new_cp[9]=((unsigned short)(coin) &  0x00ff);
+    new_cp[39]=((unsigned short)0x66);
+    
+    
+    return;
+}
+
+void Build_V2_Det_Messages(const unsigned short* cp, unsigned char* new_cp, int ch)//katie
+{
+    
+    
+
+    //HV, pre_coin_time, post_coin_time,gain_correction, offset_correction, integration_time, base_max, base_min, sig_T1, sig_T2, Tprev, Tper, TCmax, NCmax, NCmin, Qmax,Qmin
+    
+    
+    new_cp[0]=((unsigned short)0x99);  // start message
+    new_cp[1]=((unsigned short)0x20);  //identifier
+    new_cp[2]=((unsigned short) (ch+1)) ; // ch
+
+    new_cp[3]=((unsigned short) (cp[0])& 0xff00)>>8 ; // HV
+    new_cp[4]=((unsigned short) (cp[0]) & 0xff00)  ; // HV
+    // [5] was trigger condition (ie 3/4)
+    
+    new_cp[5]=((unsigned short) (cp[1]/5) & 0xff00)>>8 ; // pre-coincidence time
+    new_cp[6]=((unsigned short) (cp[1]/5) & 0xff00)  ; // pre-coincidence time
+    
+ 
+    new_cp[7]=((unsigned short) (cp[2]/5) & 0xff00)>>8 ; // post-coincidence time
+    new_cp[8]=((unsigned short) (cp[2]/5) & 0xff00)  ; // post-coincidence time
+    
+    new_cp[9]=((unsigned short) (cp[3]) & 0xff00)>>8 ; // gain correction
+    new_cp[10]=((unsigned short) (cp[3]) & 0xff00)  ; // gain correction
+    
+    new_cp[11]=((unsigned short) (cp[4]) & 0xff00)>>8 ; // offset correction
+    new_cp[12]=((unsigned short) (cp[4]) & 0xff00)  ; // offset correction
+    
+    
+    new_cp[13]=((unsigned short) (cp[5]) & 0xff00)>>8 ; // base max
+    new_cp[14]=((unsigned short) (cp[5]) & 0xff00)  ; // base max
+    
+    new_cp[15]=((unsigned short) (cp[6]) & 0xff00)>>8 ; // base min
+    new_cp[16]=((unsigned short) (cp[6]) & 0xff00)  ; // base min
+    
+    
+    new_cp[17]=((unsigned short) (cp[7]) & 0xff00)>>8 ; // sig T1
+    new_cp[18]=((unsigned short) (cp[7]) & 0xff00)  ; // sig T1
+
+    new_cp[19]=((unsigned short) (cp[8]) & 0xff00)>>8 ; // sig T2
+    new_cp[20]=((unsigned short) (cp[8]) & 0xff00)  ; // sig T2
+    
+    
+    new_cp[21]=((unsigned short) (cp[9]) )  ; // t prev
+    new_cp[22]=((unsigned short) (cp[10]) )  ; // t per
+    new_cp[23]=((unsigned short) (cp[11]))  ; // tc max
+    new_cp[24]=((unsigned short) (cp[12]))  ; // nc max
+    new_cp[25]=((unsigned short) (cp[13]))  ; // nc min
+    new_cp[26]=((unsigned short) (cp[14]))  ; // qmax
+    new_cp[27]=((unsigned short) (cp[15]))  ; // qmin
+    
+    
+    new_cp[39]=((unsigned short)0x66); // end message
+
+
+    
+    return;
+}
+
 void Process_Waveform(const std::vector<unsigned short>& trace, //4000 bins long
                       const int& windw_len_pre_peak, // n bins before peak to include in window
                       const int& windw_len_post_peak, // n bins after peak to include in window

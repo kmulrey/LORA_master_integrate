@@ -19,6 +19,8 @@ unsigned int Get_Detector_Number(int, int);
 char Trigger_Condition(unsigned short);
 
 void Build_Hisparc_Messages(const unsigned short*, unsigned char*);
+void Build_V2_Det_Messages(const unsigned short*, unsigned char*, int);//katie
+void Build_V2_Stn_Messages(const unsigned short*, unsigned char*);//katie
 
 void Check_HV(const unsigned short,std::string);
 

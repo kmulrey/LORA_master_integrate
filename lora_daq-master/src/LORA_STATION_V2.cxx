@@ -51,8 +51,12 @@ void LORA_STATION_V2::Init(const STATION_INFO& sta_info, const std::string& serv
   //via the socket. Build_Hisparc_Messages converts unsigned short array
   //to unsigned char array , also doing transformations required to make
   //message readable by Hisparc Digitizers.
-  //Build_Hisparc_Messages(sta_info.init_control_params_m, init_control_params[0]);
-  //Build_Hisparc_Messages(sta_info.init_control_params_s, init_control_params[1]);
+  Build_V2_Det_Messages(sta_info.init_control_params_ch[0],Control_Messages[0],0);//katie
+  Build_V2_Det_Messages(sta_info.init_control_params_ch[1],Control_Messages[1],1);//katie
+  Build_V2_Det_Messages(sta_info.init_control_params_ch[2],Control_Messages[2],2);//katie
+  Build_V2_Det_Messages(sta_info.init_control_params_ch[3],Control_Messages[3],3);//katie
+  Build_V2_Stn_Messages(sta_info.init_control_params_stn, Control_Mode_Messages);//katie
+
 
   //mVolts2ADC is 2
 
@@ -142,20 +146,33 @@ void LORA_STATION_V2::Open()
 
 void LORA_STATION_V2::Send_Control_Params()
 {
-    /*
-  for (int i=0;i<2;i++)
+    
+    
+  for (int i=1;i<2;i++) //katie: only use send socket
   {
-    auto lenofbuffer = sizeof(init_control_params[i])/sizeof(init_control_params[i][0]);
+    auto lenofbuffer = sizeof(Control_Messages[0])/sizeof(Control_Messages[0][0]);
+    auto lenofbufferMode = sizeof(Control_Mode_Messages);
+
     int bytes_sent = 0;
     bool use_spare_socket=false;
-    socket[i]->Send(init_control_params[i],lenofbuffer,bytes_sent,use_spare_socket);
+    socket[i]->Send(Control_Messages[0],lenofbuffer,bytes_sent,use_spare_socket);
+    usleep(50000);
+    socket[i]->Send(Control_Messages[1],lenofbuffer,bytes_sent,use_spare_socket);
+    usleep(50000);
+    socket[i]->Send(Control_Messages[2],lenofbuffer,bytes_sent,use_spare_socket);
+    usleep(50000);
+    socket[i]->Send(Control_Messages[3],lenofbuffer,bytes_sent,use_spare_socket);
+    usleep(50000);
+    socket[i]->Send(Control_Mode_Messages,lenofbufferMode,bytes_sent,use_spare_socket);
+
     std::cout << "Control Params bytes sent: " << bytes_sent << std::endl;
   }
-    */
+ 
 }
 
 void LORA_STATION_V2::Send_Electronics_Calib_Msg()
 {
+    //katie: no electronic cal for V2
     /*
   unsigned char dat[4] ;
 	dat[0]=0x99 ;
@@ -524,7 +541,7 @@ void LORA_STATION_V2::Close()
 	dat[1]=0xAA ;		//We have used identifier 'AA' for stopping DAQ in LORA
 	dat[2]=0x66 ;
   auto lenofbuffer = sizeof(dat)/sizeof(dat[0]);
-    std::cout<<"check 3\n";
+    //std::cout<<"check 3\n";
   for (int i=1;i<2;i++) //katie-> 1 for now to only use "send socket"
   {
 
@@ -534,7 +551,7 @@ void LORA_STATION_V2::Close()
 
     socket[i]->Close();
   }
-    std::cout<<"check 4\n";
+    //std::cout<<"check 4\n";
 
   sleep(2);
 /*   //katie, not using screens for now
