@@ -1,7 +1,7 @@
-# lasa, triger condition, full scale enable, pps enable, daq enable, ch1 en, ch2 en, ch3 en, ch4 en, cal en, 10 sec en, ext en, ch1 readout en, ch2 readout en, ch3 readout en, ch4 readout en, triiger rate divider, coincidence readout time
+# lasa, triger condition, full scale enable, pps enable, daq enable, ch1 en, ch2 en, ch3 en, ch4 en, cal en, 10 sec en, ext en, ch1 readout en, ch2 readout en, ch3 readout en, ch4 readout en, triger rate divider, coincidence readout time
 
-lasa6   3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
-lasa7   3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
-lasa8   3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
-lasa9   3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
-lasa10  3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   100
+lasa6   0   0   1   1   1   1   1   1   0   1   0   1   1   1   1   0   200
+lasa7   3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   200
+lasa8   3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   200
+lasa9   3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   200
+lasa10  3   0   1   1   1   1   1   1   0   0   0   1   1   1   1   0   200

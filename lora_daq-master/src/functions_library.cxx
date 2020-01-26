@@ -218,7 +218,6 @@ void Build_V2_Stn_Messages(const unsigned short* cp, unsigned char* new_cp)//kat
     //CONTROL REGISTER -> 2 bits
     unsigned short control=0;
     control= (cp[1]<<2) | (cp[2]<<1)| (cp[3]<<0);
-    std::cout<<"control: "<<cp[1]<<"  "<<cp[2]<<"  "<<cp[3]<<"  -->  "<<control<<"\n";
 
     new_cp[2]=((unsigned short)(control) & 0xff00)>>8 ;
     new_cp[3]=((unsigned short)(control) & 0x00ff) ;
@@ -226,7 +225,7 @@ void Build_V2_Stn_Messages(const unsigned short* cp, unsigned char* new_cp)//kat
     
     //TRIGGER ENABLE MASK-> 2 bits
     unsigned short trigger=0;
-    trigger= (cp[7]<<11) | (cp[6]<<10)| (cp[5]<<9)|(cp[4]<<8)|(cp[8]<<6)|(cp[9]<<5)|(cp[10]<<4);
+    trigger= (cp[7]<<11) | (cp[6]<<10)| (cp[5]<<9) | (cp[4]<<8) | (0<<7) | (cp[8]<<6) | (cp[9]<<5) | (cp[10]<<4);
     //printf("%x\n",trigger);
     new_cp[4]=((unsigned short)(trigger) & 0xff00)>>8 ;
     new_cp[5]=((unsigned short)(trigger) & 0x00ff) ;
@@ -261,8 +260,8 @@ void Build_V2_Det_Messages(const unsigned short* cp, unsigned char* new_cp, int 
 {
     
     
-
-    //HV, pre_coin_time, post_coin_time,gain_correction, offset_correction, integration_time, base_max, base_min, sig_T1, sig_T2, Tprev, Tper, TCmax, NCmax, NCmin, Qmax,Qmin
+    //(0) HV, (1) pre_coin_time, (2) post_coin_time,(3) gain_correction, (4) offset_correction,(5) integration_time, (6) base_max, (7) base_min, (8) sig_T1, (9) sig_T2, (10) Tprev, (11) Tper, (12) TCmax, (13) NCmax, (14)  NCmin, (15) Qmax, (16) Qmin
+   
     
     
     new_cp[0]=((unsigned short)0x99);  // start message
@@ -270,44 +269,50 @@ void Build_V2_Det_Messages(const unsigned short* cp, unsigned char* new_cp, int 
     new_cp[2]=((unsigned short) (ch+1)) ; // ch
 
     new_cp[3]=((unsigned short) (cp[0])& 0xff00)>>8 ; // HV
-    new_cp[4]=((unsigned short) (cp[0]) & 0xff00)  ; // HV
+    new_cp[4]=((unsigned short) (cp[0]) & 0x00ff)  ; // HV
     // [5] was trigger condition (ie 3/4)
     
-    new_cp[5]=((unsigned short) (cp[1]/5) & 0xff00)>>8 ; // pre-coincidence time
-    new_cp[6]=((unsigned short) (cp[1]/5) & 0xff00)  ; // pre-coincidence time
+    new_cp[5]=((unsigned short) ((cp[1]/5) & 0xff00));//>>8 ; // pre-coincidence time
+    new_cp[6]=((unsigned short) ((cp[1]/5)& 0x00ff))  ; // pre-coincidence time
+    std::cout<<"pre-coincidence time: "<<cp[1]<<"  "<<cp[1]/5<<"\n";
+
+    std::cout<<"pre-coincidence time: "<<(unsigned short)new_cp[5]<<"  "<<(unsigned short)new_cp[6]<<"\n";
     
  
     new_cp[7]=((unsigned short) (cp[2]/5) & 0xff00)>>8 ; // post-coincidence time
-    new_cp[8]=((unsigned short) (cp[2]/5) & 0xff00)  ; // post-coincidence time
+    new_cp[8]=((unsigned short) (cp[2]/5) & 0x00ff)  ; // post-coincidence time
     
     new_cp[9]=((unsigned short) (cp[3]) & 0xff00)>>8 ; // gain correction
-    new_cp[10]=((unsigned short) (cp[3]) & 0xff00)  ; // gain correction
+    new_cp[10]=((unsigned short) (cp[3]) & 0x00ff)  ; // gain correction
     
-    new_cp[11]=((unsigned short) (cp[4]) & 0xff00)>>8 ; // offset correction
-    new_cp[12]=((unsigned short) (cp[4]) & 0xff00)  ; // offset correction
-    
-    
-    new_cp[13]=((unsigned short) (cp[5]) & 0xff00)>>8 ; // base max
-    new_cp[14]=((unsigned short) (cp[5]) & 0xff00)  ; // base max
-    
-    new_cp[15]=((unsigned short) (cp[6]) & 0xff00)>>8 ; // base min
-    new_cp[16]=((unsigned short) (cp[6]) & 0xff00)  ; // base min
+    new_cp[11]=((unsigned short) (cp[4])) ; // offset correction
+    new_cp[12]=((unsigned short) (cp[5])) ; // integration time
     
     
-    new_cp[17]=((unsigned short) (cp[7]) & 0xff00)>>8 ; // sig T1
-    new_cp[18]=((unsigned short) (cp[7]) & 0xff00)  ; // sig T1
+    new_cp[13]=((unsigned short) (cp[6]) & 0xff00)>>8 ; // base max
+    new_cp[14]=((unsigned short) (cp[6]) & 0x00ff)  ; // base max
+    
+    new_cp[15]=((unsigned short) (cp[7]) & 0xff00)>>8 ; // base min
+    new_cp[16]=((unsigned short) (cp[7]) & 0x00ff)  ; // base min
+    
+    
+    new_cp[17]=((unsigned short) (cp[8]) & 0xff00)>>8 ; // sig T1
+    new_cp[18]=((unsigned short) (cp[8]) & 0x00ff)  ; // sig T1
+    std::cout<<"T1 send: "<<cp[8]<<"\n";
 
-    new_cp[19]=((unsigned short) (cp[8]) & 0xff00)>>8 ; // sig T2
-    new_cp[20]=((unsigned short) (cp[8]) & 0xff00)  ; // sig T2
+    
+
+    new_cp[19]=((unsigned short) (cp[9]) & 0xff00)>>8 ; // sig T2
+    new_cp[20]=((unsigned short) (cp[9]) & 0x00ff)  ; // sig T2
     
     
-    new_cp[21]=((unsigned short) (cp[9]) )  ; // t prev
-    new_cp[22]=((unsigned short) (cp[10]) )  ; // t per
-    new_cp[23]=((unsigned short) (cp[11]))  ; // tc max
-    new_cp[24]=((unsigned short) (cp[12]))  ; // nc max
-    new_cp[25]=((unsigned short) (cp[13]))  ; // nc min
-    new_cp[26]=((unsigned short) (cp[14]))  ; // qmax
-    new_cp[27]=((unsigned short) (cp[15]))  ; // qmin
+    new_cp[21]=((unsigned short) (cp[10]) )  ; // t prev
+    new_cp[22]=((unsigned short) (cp[11]) )  ; // t per
+    new_cp[23]=((unsigned short) (cp[12]))  ; // tc max
+    new_cp[24]=((unsigned short) (cp[13]))  ; // nc max
+    new_cp[25]=((unsigned short) (cp[14]))  ; // nc min
+    new_cp[26]=((unsigned short) (cp[15]))  ; // qmax
+    new_cp[27]=((unsigned short) (cp[16]))  ; // qmin
     
     
     new_cp[39]=((unsigned short)0x66); // end message

@@ -27,6 +27,8 @@ OPERATIONS lora_daq;
    
  
   bool stay_in_loop=true;
+  //bool stay_in_loop=false;
+
   while(stay_in_loop)
   {
     lora_daq.Listen_To_Stations();
@@ -54,7 +56,7 @@ OPERATIONS lora_daq;
       sleep(1);//required to wait for any running processes.
     }
   }
-/*
+
   int n_msgs_unsaved = lora_daq.Get_Sum_Size_of_Spools();
   std::cout << std::endl << "Shutting the code... "
   << "emptying all recvd msgs from spools... " << std::endl;
@@ -72,7 +74,7 @@ OPERATIONS lora_daq;
       count++;
     else count=0;
     n_msgs_unsaved = new_value;
-  }*/
+  }
   std::cout << std::endl<< "All spools are empty... have a good day!" << std::endl;
 
   lora_daq.End();

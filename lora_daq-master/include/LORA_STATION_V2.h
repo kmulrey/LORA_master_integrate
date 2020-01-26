@@ -103,8 +103,8 @@ private:
   const unsigned char msg_header_bit = 0x99 ;
   const unsigned char msg_tail_bit = 0x66 ;
 
-  const unsigned int event_msg_size=12023;
-  const unsigned char event_msg_bit = 0xA0;
+  const unsigned int event_msg_size=1576;
+  const unsigned char event_msg_bit = 0xC0;
 
   const unsigned int onesec_msg_size=320;
   const unsigned char onesec_msg_bit=0xC4;

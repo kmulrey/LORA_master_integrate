@@ -287,7 +287,7 @@ void LORA_STATION_V2::Interpret_And_Store_Incoming_Msgs(tm& rs_time)
                                                     msg_tail_bit,
                                                     idbit_and_msgsize);
       if (msg.size()==0) break; // break while() if no msg was found in buffer.
-        std::cout<<"messagee received: "<<msg[1]<<"\n";
+        std::cout<<"message received: "<<msg[1]<<"\n";
 
       most_recent_msg_rcvd_time[im_or_s]=Get_Current_Time_chrono();
     
@@ -299,6 +299,7 @@ void LORA_STATION_V2::Interpret_And_Store_Incoming_Msgs(tm& rs_time)
       }
       else if (msg[1]==event_msg_bit) //Interpret
       {
+        std::cout<<"found event\n";
         Unpack_Event_Msg_Store_To_Spool(msg, m_or_s, im_or_s, rs_time); //Store
       }
       else if (msg[1]==cp_msg_bit)
@@ -565,7 +566,7 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
                                                       const int& m_or_s_int,
                                                       const tm& rs_time)
 {
-  /*
+  
 
   if (m_or_s!="Master" && m_or_s!="Slave")
   {
@@ -574,9 +575,11 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
     ss << "\n . Received: " << m_or_s;
     throw std::runtime_error(ss.str());
   }
+    
+    std::cout<< (unsigned int)msg[0]<<"  "<<(unsigned int)msg[1]<<" --> "<<(unsigned int)msg[1576-2]<<"  "<<(unsigned int)msg[1576-1]<<"\n";
 
   EVENT_DATA_STRUCTURE event[2];
-
+  /*
   unsigned char header = (unsigned char) msg[0];
   unsigned char identifier_bit = (unsigned char) msg[1] ;
   unsigned int Trigg_condition= (unsigned int) msg[2] ;
