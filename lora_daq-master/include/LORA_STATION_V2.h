@@ -106,13 +106,13 @@ private:
   const unsigned int event_msg_size=12023;
   const unsigned char event_msg_bit = 0xA0;
 
-  const unsigned int onesec_msg_size=87;
-  const unsigned char onesec_msg_bit=0xA4;
+  const unsigned int onesec_msg_size=320;
+  const unsigned char onesec_msg_bit=0xC4;
 
   const unsigned int cp_msg_size=79;
   const unsigned char cp_msg_bit=0x55;
 
-  const unsigned int min_msg_size=cp_msg_size;
+  const unsigned int min_msg_size=5;//cp_msg_size; //katie
   vec_pair_unsgnchar_int idbit_and_msgsize;
   
   std::string name;

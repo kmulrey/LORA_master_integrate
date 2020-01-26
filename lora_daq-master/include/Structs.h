@@ -27,6 +27,9 @@ struct ONE_SEC_STRUCTURE
 	unsigned short Channel_2_Thres_count_high  = (unsigned short) 0;
 	unsigned short Channel_2_Thres_count_low  = (unsigned short) 0;
 	unsigned char Satellite_info[61] = {0};
+    unsigned short UTC_offset = (unsigned short) 0; //katie, V2, offset GPS -> UTC in leap seconds
+    unsigned short trigger_rate = (unsigned short) 0; //katie, V2, trigger rate from all channels / last second
+
 };
 
 struct EVENT_DATA_STRUCTURE	//data structure to be stored in ROOT file - per channel - 4 per station

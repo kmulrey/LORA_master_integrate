@@ -25,7 +25,7 @@ OPERATIONS lora_daq;
   
   lora_daq.Send_Control_Params();
    
- /*
+ 
   bool stay_in_loop=true;
   while(stay_in_loop)
   {
@@ -33,19 +33,19 @@ OPERATIONS lora_daq;
 
     lora_daq.Interpret_And_Store_Incoming_Msgs();
 
-    lora_daq.Check_Coinc_Store_Event_Send_LOFAR_Trigger(!stay_in_loop);
+   // lora_daq.Check_Coinc_Store_Event_Send_LOFAR_Trigger(!stay_in_loop);
 
-    lora_daq.Reset_Thresh_Store_Log();
+   // lora_daq.Reset_Thresh_Store_Log();
 
-    lora_daq.Store_OSM();
+   // lora_daq.Store_OSM();
 
-    lora_daq.Periodic_Store_Log();
+   // lora_daq.Periodic_Store_Log();
 
-    lora_daq.Print_Detectors_Diagnostics();
+   // lora_daq.Print_Detectors_Diagnostics();
 
-    lora_daq.Save_Output_Files_At_Designated_Hour();
+   // lora_daq.Save_Output_Files_At_Designated_Hour();
 
-    lora_daq.Status_Monitoring();
+   // lora_daq.Status_Monitoring();
 
     if (!lora_daq.Is_DAQ_Execution_Status_True())
     {
@@ -54,7 +54,7 @@ OPERATIONS lora_daq;
       sleep(1);//required to wait for any running processes.
     }
   }
-
+/*
   int n_msgs_unsaved = lora_daq.Get_Sum_Size_of_Spools();
   std::cout << std::endl << "Shutting the code... "
   << "emptying all recvd msgs from spools... " << std::endl;
@@ -72,9 +72,9 @@ OPERATIONS lora_daq;
       count++;
     else count=0;
     n_msgs_unsaved = new_value;
-  }
+  }*/
   std::cout << std::endl<< "All spools are empty... have a good day!" << std::endl;
-*/
+
   lora_daq.End();
 
   return 0;

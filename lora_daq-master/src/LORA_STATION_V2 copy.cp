@@ -712,11 +712,8 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
                                    const int& m_or_s,
                                    tm& rs_time)
 {
-    //katie: there is also information about all controlled parameters stored in the PPS message
     
-    
-    
-    //std::cout<<"unpacking one sec message\n";
+    std::cout<<"unpacking one sec message\n";
   
     ONE_SEC_STRUCTURE osm;
     std::stringstream ss22(name.substr(4,1));
@@ -730,58 +727,84 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
     unsigned short month = msg[6] ;
     unsigned short day = msg[7] ;
     unsigned short hour = msg[8] ;
-    unsigned short min = msg[9] ;
-    unsigned short sec = msg[10] ;
+    unsigned short minute = msg[9] ;
+    unsigned short second = msg[10] ;
     unsigned short status_elec = msg[11] ;
-    unsigned long CTP = (msg[15] & 0x7F)<<24 | msg[14]<<16 | msg[13]<<8 | msg[12] ;
-    unsigned short sync =(msg[15] & 0x80)>>7;
+    unsigned short CTP = msg[15]<<24 | msg[14]<<16 | msg[13]<<8 | msg[12] ;
 
-    float quant = (msg[19]& 0x7F)<<24 | msg[18]<<16 | msg[17]<<8 | msg[16] ;
-    
-    unsigned short UTC_offset = msg[21]<<8 | msg[20] ; //Time(UTC) = Time (GPS) - UTC_offset
-    unsigned short timing_flags=msg[22] ;  // resolution-T GPS manual pg 77-81
-    unsigned short decoding_status=msg[23] ;  // resolution-T GPS manual pg 77-81
-    unsigned short trigger_rate=msg[25]<<8 | msg[24] ;
 
-    /*
     std::cout<<"PPS header: "<<header<<"\n";
     std::cout<<"PPS ID: "<<identifier_bit<<"\n";
 
     std::cout<<"PPS size: "<<size<<"\n";
     std::cout<<"year, month, day, hour, min, sec: "<<year<<"  "<<month<<"  "<<day<<"  "<<hour<<"  "<<minute<<"  "<<second<<"\n";
     std::cout<<"elec status: "<<status_elec<<"\n";
-    std::cout<<"CTP: "<<CTP<<"\n";//<<(unsigned short)(msg[15] & 0x7F)<<"  "<<(unsigned short)msg[14]<<"  "<<(unsigned short)msg[13]<<"  "<<(unsigned short)msg[12]<<"\n";
-    ///std::cout<<"byte 15: "<<std::bitset<8>(msg[15])<<"\n";
-    std::cout<<"CTP error: "<<err_CTP<<"\n";//std::bitset<8>(err_CTP)<<" --> "<<std::bitset<8>((err_CTP)>>7)<<"\n";
-    std::cout<<"quant: "<<quant<<"\n";
-    std::cout<<"UTC offset: "<<UTC_offset<<"\n";
-    std::cout<<"Trigger rate: "<<trigger_rate<<"\n";
+    std::cout<<"CTP: "<<CTP<<"\n";
 
 	//short unsigned int month=msg[3] ;
 	//short unsigned int year=(msg[4]<<8)+msg[5] ;
-     */
-    
-    
-    
-    
-    
-    osm.YMD = year*10000 + month*100 + day ;
-	osm.CTP=CTP;
-    osm.quant=quant;
-    osm.sync=sync;
-    osm.trigger_rate=trigger_rate;
-    osm.UTC_offset=UTC_offset;
 
+    //osm.YMD = year*10000 + month*100 + day ;
+    
+    //std::cout<<"Day, month, year: "<<day<<"  "<<month<<"  "<<year<<"\n";
+    /*
+     printf("__________________________________________\n");
+     
+     int32_t rread,nread,ntry,i;
+     struct tm tt;
+     struct timeval tp;
+     float *fp;
+     unsigned short ppsrate;
+     int32_t prevgps;
+     uint8_t buf[MAX];
+     
+     nread = 2;                                    // again, already 2 bytes read!
+     ntry = 0;
+     buf[0] = MSG_START;
+     buf[1] = ID_PARAM_PPS;
+     gettimeofday(&tp,NULL);
+     int count66=0;
+     printf("PPS length: %d\n",l);
+     int l1=0;
+     
+     for(l1=0; l1<MAX;l1++){
+     buf_PPS_hold[l1]=buf1[l1];
+     printf("%x   ",buf1[l1]);
+     if(buf1[l1]==0x66){count66++;}
+     if(count66==2){break;}
+     }
+    */
+    
+    
+/*
+  short unsigned int hour=msg[6] ;
+  short unsigned int min=msg[7] ;
+  short unsigned int sec=msg[8] ;
 
-    tm t; t.tm_sec=sec ; t.tm_min=min ;
-    t.tm_hour=hour ; t.tm_mday=day ;
+	short unsigned int sync=(msg[9]>>7)&0x1 ;
+  //highest bit of CTP 'indicates' whether 2.5ns synch error offset has to be
+  //applied for ns level time assignment. refer to HISPARC manual.
+	osm.CTP=((msg[9]&0x7f)<<24)+(msg[10]<<16)+(msg[11]<<8)+msg[12] ;
+
+	unsigned char buf[4] ;
+	for(int i=0;i<4;++i) buf[i]=msg[16-i] ;
+	osm.quant=*(float*)buf ;
+  //FIXIT: check if this is a really valid syntax?!
+
+  tm t; t.tm_sec=sec ; t.tm_min=min ;
+  t.tm_hour=hour ; t.tm_mday=day ;
 	t.tm_mon=month-1 ; t.tm_year=year-1900 ;
 	//Because GPS month starts from 1 while in 'tm' struct, it starts from 0.
 	osm.GPS_time_stamp=(unsigned int)timegm(&t) ;
-   //GPS_time_stamp + 1 because LORA clock is behind 1 second. see old daq.
-    osm.GPS_time_stamp+=1;
+  //GPS_time_stamp + 1 because LORA clock is behind 1 second. see old daq.
+  osm.GPS_time_stamp+=1;
 
- 
+	osm.Channel_1_Thres_count_high=(msg[17]<<8)+msg[18] ;
+	osm.Channel_1_Thres_count_low=(msg[19]<<8)+msg[20] ;
+  osm.Channel_2_Thres_count_high=(msg[21]<<8)+msg[22] ;
+ 	osm.Channel_2_Thres_count_low=(msg[23]<<8)+msg[24] ;
+
+  for (int i=0;i<61;++i) osm.Satellite_info[i]= msg[i+25] ;
 
   osm.Master_or_Slave=m_or_s;
 
@@ -799,7 +822,7 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
     t.tm_year=year ;
     rs_time = t;
   }
-
+*/
 }
 
 std::string LORA_STATION_V2::Send_Name()

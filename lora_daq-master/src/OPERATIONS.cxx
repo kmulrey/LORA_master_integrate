@@ -277,7 +277,7 @@ void OPERATIONS::Listen_To_Stations()
   // wait till one of them is ready for reading or until timeout.
   n_fds_ready = select(max_fd_val+1, &active_stations_fds, NULL, NULL, &timeout);
   //https://stackoverflow.com/questions/589783/not-able-to-catch-sigint-signal-while-using-select
-
+    //std::cout<<"n_fds_ready: "<<n_fds_ready<<"\n";
   if (n_fds_ready<0)
   {//if select() throws an error:
     //printf("line: %d in: %s\n", __LINE__, __FILE__);

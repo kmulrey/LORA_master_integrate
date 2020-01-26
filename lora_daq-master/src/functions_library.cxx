@@ -206,6 +206,11 @@ void Build_V2_Stn_Messages(const unsigned short* cp, unsigned char* new_cp)//kat
 {
     // (0) triger condition, (1) full scale enable, (2) pps enable, (3) daq enable, (4) ch1 en, (5) ch2 en, (6) ch3 en, (7) ch4 en, (8) cal en, (9) 10 sec en, (10) ext en, (11) ch1 readout en, (12) ch2 readout en, (13) ch3 readout en, (14) ch4 readout en, (15) triger rate divider, (16) coincidence readout time
     //CONTROL REGISTER -> 2 bits
+    
+    
+    
+    
+    
    
     new_cp[0]=((unsigned short)0x99);  // start message
     new_cp[1]=((unsigned short)0x21);  //identifier
@@ -213,7 +218,8 @@ void Build_V2_Stn_Messages(const unsigned short* cp, unsigned char* new_cp)//kat
     //CONTROL REGISTER -> 2 bits
     unsigned short control=0;
     control= (cp[1]<<2) | (cp[2]<<1)| (cp[3]<<0);
-    
+    std::cout<<"control: "<<cp[1]<<"  "<<cp[2]<<"  "<<cp[3]<<"  -->  "<<control<<"\n";
+
     new_cp[2]=((unsigned short)(control) & 0xff00)>>8 ;
     new_cp[3]=((unsigned short)(control) & 0x00ff) ;
 
@@ -244,6 +250,7 @@ void Build_V2_Stn_Messages(const unsigned short* cp, unsigned char* new_cp)//kat
     coin=cp[16]/5;
     new_cp[8]=((unsigned short)(coin) & 0xff00)>>8 ;
     new_cp[9]=((unsigned short)(coin) &  0x00ff);
+    new_cp[10]=(unsigned short)cp[0];
     new_cp[39]=((unsigned short)0x66);
     
     
