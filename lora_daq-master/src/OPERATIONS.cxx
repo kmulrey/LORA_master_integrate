@@ -342,6 +342,7 @@ void OPERATIONS::Check_Coinc_Store_Event_Send_LOFAR_Trigger(const bool& daq_endi
   //Get noise information from waveforms before doing anything with them
   Process_Event_Spool_Before_Coinc_Check(wait_another_iteration);
 
+  
   if (wait_another_iteration==1 && !daq_ending)
   {
     //i.e. Process_Event_Spool_Before_Coinc_Check() has altered it.
@@ -353,7 +354,7 @@ void OPERATIONS::Check_Coinc_Store_Event_Send_LOFAR_Trigger(const bool& daq_endi
   current_check_coinc_interval=detector_config.check_coinc_interval;
   most_recent_event_check_time= Get_Current_Time_chrono();
   // std::cout << "dt_check_coinc_ms:" << dt_ms << std::endl;
-
+  
   //Collect all hit information from all stations.
   tvec_EVENT_SPOOL_SUMMARY all_hits;
   for (int i=0; i<lora_array_ptrs.size(); ++i)
@@ -462,6 +463,7 @@ void OPERATIONS::Check_Coinc_Store_Event_Send_LOFAR_Trigger(const bool& daq_endi
         lofar_trig_satisfied=1;
 
     unsigned int trigg_sent=0;// won't be sent if this trig is within 6 mins of previous one.
+      /*  //katie
     if (lofar_trig_satisfied==1)
     {
       //send time for the first hit of the event.
@@ -470,12 +472,13 @@ void OPERATIONS::Check_Coinc_Store_Event_Send_LOFAR_Trigger(const bool& daq_endi
       std::cout << "------ <<<< Radio trigger >>>> ------  " << std::endl;
       std::cout << std::endl;
     }
-
+    */
     //Store event in ROOT file, ask LORA_STATIONs
     //to discard it from the spools
-    if (lora_trig_satisfied==1)
+      if (lora_trig_satisfied==1){
+      std::cout<<"~~~~~~LORA EVENT SAVED~~~~~~\n";
       Store_Event(event, uniq_statns, lofar_trig_satisfied);
-
+      }
     Print_Array_Diagnostics(event,n_detectors,uniq_statns.size(),
                             lora_trig_satisfied, lofar_trig_satisfied, trigg_sent);
 
@@ -488,6 +491,7 @@ void OPERATIONS::Check_Coinc_Store_Event_Send_LOFAR_Trigger(const bool& daq_endi
       lora_array_ptrs[i]->Send_Event_Spool_Info(all_hits);
     all_hits_size=all_hits.size();
    }
+   
   return;
 }
 
@@ -971,6 +975,15 @@ void OPERATIONS::Read_Detector_File(const std::string fname)
         ss>> detector_config.wvfm_process_wpost;
     else if (k=="wvfm_process_offtwlen")
         ss>> detector_config.wvfm_process_offtwlen;
+      
+    else if (k=="wvfm_process_wpre_v2") //katie
+        ss>> detector_config.wvfm_process_wpre_v2; //katie
+    else if (k=="wvfm_process_wpost_v2") //katie
+        ss>> detector_config.wvfm_process_wpost_v2; //katie
+    else if (k=="wvfm_process_offtwlen_v2") //katie
+        ss>> detector_config.wvfm_process_offtwlen_v2; //katie
+      
+      
     else if (k=="diagnostics_interval")
         ss>> detector_config.diagnostics_interval;
     else if (k=="sigma_ovr_thresh")

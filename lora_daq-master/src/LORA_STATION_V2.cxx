@@ -60,11 +60,10 @@ void LORA_STATION_V2::Init(const STATION_INFO& sta_info, const std::string& serv
 
   //mVolts2ADC is 2
 
-  //current_threshold_ADC[0]= (unsigned short) (sta_info.init_control_params_m[16] * 2);
-  //current_threshold_ADC[1]= (unsigned short) (sta_info.init_control_params_m[18] * 2);
-
-  //current_threshold_ADC[2]= (unsigned short) (sta_info.init_control_params_s[16] * 2);
-  //current_threshold_ADC[3]= (unsigned short) (sta_info.init_control_params_s[18] * 2);
+  current_threshold_ADC[0]= (unsigned short) (sta_info.init_control_params_ch[0][8]);
+  current_threshold_ADC[1]= (unsigned short) (sta_info.init_control_params_ch[1][8]);
+  current_threshold_ADC[2]= (unsigned short) (sta_info.init_control_params_ch[2][8]);
+  current_threshold_ADC[3]= (unsigned short) (sta_info.init_control_params_ch[3][8]);
 
   //socket buffer: holds all incoming msgs.
   // it is frequently checked for a complete msg and msg is moved
@@ -575,94 +574,140 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
     ss << "\n . Received: " << m_or_s;
     throw std::runtime_error(ss.str());
   }
-    
-    std::cout<< (unsigned int)msg[0]<<"  "<<(unsigned int)msg[1]<<" --> "<<(unsigned int)msg[1576-2]<<"  "<<(unsigned int)msg[1576-1]<<"\n";
+    std::cout<<"________________________event!________________________\n";
 
-  EVENT_DATA_STRUCTURE event[2];
-  /*
+
+  EVENT_DATA_STRUCTURE event[4];  // for each channel
+  
+    
+    
+    
+    
   unsigned char header = (unsigned char) msg[0];
   unsigned char identifier_bit = (unsigned char) msg[1] ;
-  unsigned int Trigg_condition= (unsigned int) msg[2] ;
-  unsigned int Trigg_pattern= (unsigned int) ((msg[3]<<8)+msg[4]) ;
-  // 5,6, are pre coinc window - not loaded
-  // 7,8 are coinc window - not loaded
-  // 9,10 are post coinc window - not loaded
-  short unsigned int day=msg[11] ;
-  short unsigned int month=msg[12] ;
-  short unsigned int year=(msg[13]<<8)+msg[14] ;
-  short unsigned int hour=msg[15] ;
-  short unsigned int min=msg[16] ;
-  short unsigned int sec=msg[17] ;
-	unsigned int CTD=(msg[18]<<24)+(msg[19]<<16)+(msg[20]<<8)+msg[21] ;
+  unsigned short byte_count = msg[3]<<8 | msg[2] ;
+  std::cout<<"byte count "<<byte_count<<"\n";
 
-  //current_CTP would have been set by the previous call
-  //to unpack OSM for this station.
-  //its a LORA_STATION_V1 member.
+  uint16_t trigger_pattern = (unsigned char) msg[5]<<8 | msg[4] ;
+    
+  std::cout<<"trigger pattern "<<std::bitset<16> (trigger_pattern)<<"\n";
+
+
+    
+  unsigned short year = msg[7]<<8 | msg[6] ;
+  unsigned short month = msg[8] ;
+  unsigned short day = msg[9] ;
+  unsigned short hour = msg[10] ;
+  unsigned short min = msg[11] ;
+  unsigned short sec = msg[12] ;
+  unsigned short status_elec = msg[13] ;
+  std::cout<<"year, month, day, hour, min, sec: "<<year<<"  "<<month<<"  "<<day<<"  "<<hour<<"  "<<min<<"  "<<sec<<"\n";
+
+  unsigned long CTD = (msg[17] & 0x7F)<<24 | msg[16]<<16 | msg[15]<<8 | msg[14] ;
+  std::cout<<"CTD: "<<CTD<<"\n";
+    
+  unsigned short samples_ch1 = msg[19]<<8 | msg[18] ;
+  unsigned short samples_ch2 = msg[21]<<8 | msg[20] ;
+  unsigned short samples_ch3 = msg[23]<<8 | msg[22] ;
+  unsigned short samples_ch4 = msg[25]<<8 | msg[24] ;
+
+  std::cout<<"samples: "<<samples_ch1<<"  "<<samples_ch2<<"  "<<samples_ch3<<"  "<<samples_ch4<<"\n";
+    
+    
+  unsigned short T1_ch1 = msg[27]<<8 | msg[26] ;
+  unsigned short T2_ch1 = msg[29]<<8 | msg[28] ;
+    
+  unsigned short T1_ch2 = msg[31]<<8 | msg[30] ;
+  unsigned short T2_ch2 = msg[33]<<8 | msg[32] ;
+    
+  unsigned short T1_ch3 = msg[35]<<8 | msg[34] ;
+  unsigned short T2_ch3 = msg[37]<<8 | msg[36] ;
+    
+  unsigned short T1_ch4 = msg[39]<<8 | msg[38] ;
+  unsigned short T2_ch4 = msg[41]<<8 | msg[40] ;
+
+    std::cout<<"T1 levels: "<<T1_ch1<<"  "<<T1_ch2<<"  "<<T1_ch3<<"  "<<T1_ch4<<"\n";
+    std::cout<<"T2 levels: "<<T2_ch1<<"  "<<T2_ch2<<"  "<<T2_ch3<<"  "<<T2_ch4<<"\n";
+    
+  printf("looking for list1: %x %x %x %x %x %x %x %x %x %x %x %x \n",msg[42],msg[43],msg[44],msg[45],msg[46],msg[47],msg[48],msg[49],msg[50],msg[51],msg[52],msg[53]);
+    
+  printf("looking for list2: %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x \n",msg[54],msg[55],msg[56],msg[57],msg[58],msg[59],msg[60],msg[61],msg[62],msg[63],msg[64],msg[65],msg[66],msg[67],msg[68],msg[69]);
+    
+  unsigned short first_adc = msg[71]<<8 | msg[70] ;
+  std::cout<<"first_adc: "<<first_adc<<"\n";
+
+    
+   int istart=70;
+    int iend=0;
+   int len_trace=samples_ch1;
+   
+   int end_adc=istart+len_trace*2*4;
+    
+    
+    int ch_count=0;
+    int ch_hold[4][5000];
+    int iadc=0;
+    int temp=0;
+    int i=0;
+
+    for(i=0;i<4;i++){
+        ch_count=0;
+        iend = istart+2*len_trace;
+        //printf("Channel %d:",i+1);
+        for(iadc=istart;iadc<iend;iadc+=2) {
+            ch_hold[i][ch_count]=*(short *)&msg[iadc];
+            event[i].counts[ch_count]=*(short *)&msg[iadc];;
+
+            ch_count++;
+        }
+        istart = iend;
+    }
+   printf("%d  %d\n",iend,end_adc);
+   printf("looking for end markers --> %x  %x\n",msg[end_adc],msg[end_adc+1]);
+    
+  
+    printf("trigger condition: %d\n",Control_Mode_Messages[10]);
+    
+    
+    
+    
+  
+  unsigned int Trigg_condition= Control_Mode_Messages[10];
+
+  
 	unsigned int nsec=(unsigned int)((1.0*CTD/current_CTP[m_or_s_int])*(1000000000)) ;
-  //This relation is not exact.
 
   //-----------xxx--------------
-  tm t; t.tm_sec=sec ; t.tm_min=min ;
+   tm t; t.tm_sec=sec ; t.tm_min=min ;
 	t.tm_hour=hour ; t.tm_mday=day ;
 	t.tm_mon=month -1 ; t.tm_year=year-1900 ;
   //Because GPS month starts from 1 while in 'tm' struct, it starts from 0.
 	unsigned int GPS_time_stamp=(unsigned int)timegm(&t) ;
+    
 
-  for (int i=0;i<2;++i)
+    
+    
+    std::cout<<"detector name: "<<name<<"\n";
+  for (int i=0;i<4;++i)
   {
-    auto detno = Get_Detector_Number(name,m_or_s,i);
+    auto detno = Get_Detector_NumberV2(name,i);
+
     event[i].Station = station_no ;
     event[i].detector = detno ;
     event[i].YMD = year*10000 + month*100 + day ;
     //GPS_time_stamp + 1 because LORA clock is behind 1 second. see old daq.
-  	event[i].GPS_time_stamp = GPS_time_stamp +1 ;
+  	event[i].GPS_time_stamp = GPS_time_stamp +1 ; //maybe 18 seconds off?
   	event[i].CTD = CTD;
   	event[i].nsec = nsec;
   	event[i].Trigg_condition = Trigg_condition;
-  	event[i].Trigg_pattern = Trigg_pattern;
+    event[i].Trigg_pattern = trigger_pattern;
   	event[i].Total_counts  = -99.0;
   	event[i].Corrected_peak = -99.0;
   	event[i].Raw_peak = 0;
   }
 
-	short unsigned a1,b1,a2,b2,a3,b3,ch1_bin1,ch1_bin2 ;	//For channel 1
-	short unsigned A1,B1,A2,B2,A3,B3,ch2_bin1,ch2_bin2 ;	//For channel 2
-	int k=0 ;
-
-	for(int j=22;j<=5998+22;j+=3)
-  //it seems content of 2 bins is spread in 3 bits
-  //of the event msg from the lasa-clients
-  //after 6000 is second channel. being loaded simultaneously
-	{
-		a1=(msg[j]>>4)&0xf ;
-		b1=msg[j]&0xf ;
-		a2=(msg[j+1]>>4)&0xf ;
-		ch1_bin1=(a1<<8)+(b1<<4)+a2 ;
-
-    A1=(msg[j+6000]>>4)&0xf ;
-		B1=msg[j+6000]&0xf ;
-		A2=(msg[j+6000+1]>>4)&0xf ;
-		ch2_bin1=(A1<<8)+(B1<<4)+A2 ;
-
-		event[0].counts[k]=(int)ch1_bin1 ;
-		event[1].counts[k]=(int)ch2_bin1 ;
-		k++ ;
-
-    b2=msg[j+1]&0xf ;
-		a3=(msg[j+2]>>4)&0xf ;
-		b3=msg[j+2]&0xf ;
-		ch1_bin2=(b2<<8)+(a3<<4)+b3 ;
-
-		B2=msg[j+6000+1]&0xf ;
-		A3=(msg[j+6000+2]>>4)&0xf ;
-		B3=msg[j+6000+2]&0xf ;
-		ch2_bin2=(B2<<8)+(A3<<4)+B3 ;
-
-		event[0].counts[k]=(int)ch1_bin2 ;
-		event[1].counts[k]=(int)ch2_bin2 ;
-    k++ ;
-  }
-
+	
+  
   // //--------Event time stamp in nanosecs (w.r.t run_start_time and is used
   //"only" for checking the coincidences)--------
   // The calculation below assumes:-> 1 year=365 days; 1 month=30 days;
@@ -676,27 +721,22 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
   time_stamp*=1000000000; //to ns
   time_stamp+=(long long unsigned)(nsec) ;
 
-  for (int i=0;i<2;i++)
+  for (int i=0;i<4;i++)
   {
-    //add both event containers to event_spool of corresponding
-    //channel. m_or_s=0 for Master, m_or_s=1 for Slave.
-    if (m_or_s=="Master")
-    {
-      event_spool[i].push_back(std::make_pair(event[i],time_stamp));
-    }
-    else if (m_or_s=="Slave")
-    {
-      event_spool[2+i].push_back(std::make_pair(event[i],time_stamp));
-    }
+   //removed m_or_s
+    event_spool[i].push_back(std::make_pair(event[i],time_stamp));
+    
   }
-    */
+    
+    std::cout<<"______________________________________________________\n";
+
 }
  
 
 
 void LORA_STATION_V2::Update_current_CTP(const int& m_or_s)
 {
- /*
+ 
   if (osm_spool[m_or_s].size()==0)
   {
     std::string errormsg="No OSM MSG FOUND TO PULL CTP FROM...";
@@ -706,7 +746,7 @@ void LORA_STATION_V2::Update_current_CTP(const int& m_or_s)
   //called after Unpack_OSM_Msg_Store_To_Spool is called.
   int last_element = osm_spool[m_or_s].size() -1 ;
   current_CTP[m_or_s] = osm_spool[m_or_s][last_element].CTP;
- */
+ 
 }
 
 
@@ -745,6 +785,8 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
     unsigned short timing_flags=msg[22] ;  // resolution-T GPS manual pg 77-81
     unsigned short decoding_status=msg[23] ;  // resolution-T GPS manual pg 77-81
     unsigned short trigger_rate=msg[25]<<8 | msg[24] ;
+    
+    
 
     /*
     std::cout<<"PPS header: "<<header<<"\n";
@@ -820,14 +862,17 @@ void LORA_STATION_V2::Process_Event_Spool_Before_Coinc_Check(DETECTOR_CONFIG& de
   // Calculate properties for all traces present
   // in the event_spool - before they are forwarded to OPERATIONS
   // class for event forming and eventually discarded.
- /*
+    //std::cout<<"Processing event!\n";
+ 
   for (int i=0; i<4; ++i)
   {
     for (int j=0;j<event_spool[i].size();++j)
     {
+        
       //check if this trace had already been processed.
       if (event_spool[i][j].first.Total_counts!=-99.0) continue;
-
+        
+        
       //redundant but keeping for later reference.
       // the following was being used in the old DAQ for counting
       // n detectors for trigger decision.
@@ -838,19 +883,19 @@ void LORA_STATION_V2::Process_Event_Spool_Before_Coinc_Check(DETECTOR_CONFIG& de
       // chtrig[2]=(event_spool[0][j].first.Trigg_pattern>>4)&0x1 ;
       // chtrig[3]=(event_spool[0][j].first.Trigg_pattern>>6)&0x1 ;
       // event_spool[i][j].first.Has_trigg = chtrig[i];
-
+        // katie: new DAQ doesn't record triggering this way
+        
+       
       //process waveform to get baseline/peak/counts/etc.
       int *temp = event_spool[i][j].first.counts;
-      std::vector<unsigned short> trace(temp, temp+4000);
-      int wpre= det_config.wvfm_process_wpre;
-      int wpost = det_config.wvfm_process_wpost;
-      int offwtrace_length= det_config.wvfm_process_offtwlen;
+      std::vector<signed short> trace(temp, temp+4000);
+      int wpre= det_config.wvfm_process_wpre_v2;
+      int wpost = det_config.wvfm_process_wpost_v2;
+      int offwtrace_length= det_config.wvfm_process_offtwlen_v2;
       int raw_peak;
       float baseline, corrected_peak, integrated_counts,offw_std;
-      Process_Waveform(trace,wpre,wpost,offwtrace_length,
-                       raw_peak, baseline, corrected_peak,
-                       integrated_counts, offw_std);
-
+      Process_WaveformV2(trace,wpre,wpost,offwtrace_length,raw_peak, baseline, corrected_peak,integrated_counts, offw_std);
+      
       //use the actual waveform to re-evaulate if it would have triggered.
       //this way, even though the actual ADC count used by the Digitizer
       //for threshold is not known(we supply mV and we roughly know mV2ADC)
@@ -879,7 +924,9 @@ void LORA_STATION_V2::Process_Event_Spool_Before_Coinc_Check(DETECTOR_CONFIG& de
       event_spool[i][j].first.Total_counts = integrated_counts;
       event_spool[i][j].first.Corrected_peak = corrected_peak;
       event_spool[i][j].first.Raw_peak = raw_peak;
+        
     }
+      
   }
 
   if (event_spool[0].size()!=event_spool[1].size() ||
@@ -906,7 +953,7 @@ void LORA_STATION_V2::Process_Event_Spool_Before_Coinc_Check(DETECTOR_CONFIG& de
   //if request had been made 3 times already, set counter 0 and move on.
   // or if it has never been made before... set it 0 anyway.
   request_OPS_to_wait_another_iteration=0;
- */
+ 
   return;
 }
 

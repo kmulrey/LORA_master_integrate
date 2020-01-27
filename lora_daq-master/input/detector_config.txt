@@ -14,6 +14,9 @@
 # wvfm_process_wpre : n bins before peak to include in window (total trace is 4000)
 # wvfm_process_wpost :  n bins after peak to include in window (total trace is 4000)
 # wvfm_process_offtwlen : n bins off window to include for baseline. (total trace is 4000)
+# wvfm_process_wpre_v2 : n bins before peak to include in window (total trace is 4000)
+# wvfm_process_wpost_v2 :  n bins after peak to include in window (total trace is 4000)
+# wvfm_process_offtwlen_v2 : n bins off window to include for baseline. (total trace is 4000)
 # diagnostics_interval: interval for printing out to diagnostics file 30000 ms i.e. 30 s for now.
 # sigma_ovr_thresh: for new threshold every hour. default value 5 for now.
 # init_reset_thresh_interval: the first time has to be within 2 mins of daq start.
@@ -38,6 +41,9 @@ coin_window 1000
 wvfm_process_wpre 25
 wvfm_process_wpost 135
 wvfm_process_offtwlen 100
+wvfm_process_wpre_v2 25
+wvfm_process_wpost_v2 100
+wvfm_process_offtwlen_v2 50
 diagnostics_interval 12000
 sigma_ovr_thresh 5.0
 tbb_dump_wait_min 6

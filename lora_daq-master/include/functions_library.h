@@ -14,6 +14,8 @@ std::tm* Get_Current_Time();
 unsigned long int Get_s_Since_Epoch();
 
 unsigned int Get_Detector_Number(std::string, std::string, int);
+unsigned int Get_Detector_NumberV2(std::string, int);//katie
+
 unsigned int Get_Detector_Number(int, int);
 
 char Trigger_Condition(unsigned short);
@@ -27,6 +29,11 @@ void Check_HV(const unsigned short,std::string);
 void Process_Waveform(const std::vector<unsigned short>&,
                       const int&, const int&, const int&,
                       int&, float&, float&, float&, float&);
+
+void Process_WaveformV2(const std::vector<signed short>&,
+                      const int&, const int&, const int&,
+                      int&, float&, float&, float&, float&);//changed trace to signed short
+
 
 void Time_Average_From_Circ_Buffer(const boost::circular_buffer<float>&,
                                    const boost::circular_buffer<long long unsigned>&,

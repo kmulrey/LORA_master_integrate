@@ -146,6 +146,9 @@ struct DETECTOR_CONFIG{
 	int wvfm_process_offtwlen=0;
 	int wvfm_process_wpost=0;
 	int wvfm_process_wpre=0;
+    int wvfm_process_offtwlen_v2=0;  //katie, V2 trace has different sampling
+    int wvfm_process_wpost_v2=0;  //katie, V2 trace has different sampling
+    int wvfm_process_wpre_v2=0;  //katie, V2 trace has different sampling
 	int diagnostics_interval=0;
 	float sigma_ovr_thresh=0.0;
 	int output_save_hour=23;

@@ -86,6 +86,22 @@ unsigned int Get_Detector_Number(std::string sta_name, std::string m_or_s, int c
   return detno;
 }
 
+unsigned int Get_Detector_NumberV2(std::string sta_name, int channel)
+{
+    
+    int x=0;
+    if(sta_name=="lasa6"){x=6;}
+    if(sta_name=="lasa7"){x=7;}
+    if(sta_name=="lasa8"){x=8;}
+    if(sta_name=="lasa9"){x=9;}
+    if(sta_name=="lasa0"){x=10;}
+    
+    unsigned int detno=(x-1)*4+channel+1;
+
+    
+    
+    return detno;
+}
 unsigned int Get_Detector_Number(int sta_no, int channel)
 {
   unsigned int detno = 4*(sta_no-1) + channel + 1 ;
@@ -423,6 +439,125 @@ void Process_Waveform(const std::vector<unsigned short>& trace, //4000 bins long
   for (int i=0;i<onwtrace.size();++i) integrated_counts+=(onwtrace[i]-baseline);
 
   corrected_peak = raw_peak - baseline;
+}
+
+
+void Process_WaveformV2(const std::vector<signed short>& trace0, //4000 bins long, needs to be signed
+                      const int& windw_len_pre_peak, // n bins before peak to include in window
+                      const int& windw_len_post_peak, // n bins after peak to include in window
+                      const int& offwtrace_length,//n bins off window to include for baseline.
+                      int& raw_peak,
+                      float& baseline,
+                      float& corrected_peak,
+                      float& integrated_counts,
+                      float& offw_std)
+{
+    // trace is 4000 bins long. i.e. 10,000 ns.
+    // on window should be about 400 ns.
+    // i.e. about 160 bins.
+    // lets say about 25 bins before peak and 135 bins after peak
+    
+    
+    
+    std::vector<signed short> trace;    //define new trace to be inverse of original plus offset so that all vals are positive
+    int offset=100;
+
+    for (int i=0; i<trace0.size(); i++){
+        trace.push_back(offset+(-1*trace0[i]));
+        
+    }
+    
+    
+    int peakIndex = std::max_element(trace.begin(),trace.end()) - trace.begin();
+    raw_peak = *std::max_element(trace.begin(), trace.end())-offset;  // so that raw peak reflects T1 comparison correctly
+    
+    
+    
+    if (windw_len_pre_peak+windw_len_post_peak+offwtrace_length>trace.size())
+    {
+        std::cout << "ERROR: time window /off-tw length too large" ;
+        std::cout << __LINE__ <<  ", " << __FILE__ << std::endl;
+    }
+    
+    int tw_start = peakIndex - windw_len_pre_peak ;
+    int tw_stop = peakIndex + windw_len_post_peak;
+    
+    if (tw_start<0)
+    { //lets say peakIndex is at 20
+        tw_stop += -1.0*tw_start; // extend end of window
+        tw_start = 0;
+    }
+    else if (tw_stop>trace.size())
+    {//lets say peakIndex is 3900 then 3900+135  > 4000
+        tw_start -= (tw_stop - trace.size());
+        //increase pre length from 25 to , 25 + 135 - 4000 + 3900
+        tw_stop = trace.size();
+        // reduce post length from 135 to , 4000-3900 i.e. 100.
+    }
+    
+    
+    float n_integrated_counts=0.0;
+    std::vector<unsigned short> offwtrace;
+    std::vector<float> onwtrace;
+    // std::cout << "trace size: " << trace.size() << std::endl;
+    // std::cout << "tw start, stop: " << tw_start << " " << tw_stop << std::endl;
+    
+    //just collect on time window trace.
+    for (int i=0; i<trace.size(); ++i)
+    {
+        if (i>=tw_start && i<tw_stop)
+        {
+            onwtrace.push_back(static_cast<float> (trace[i]));
+        }
+        else if (i>=tw_stop)
+        {
+            break;
+        }
+    }
+    
+    //first attempt to collect off time window trace. starting from just before tw.
+    for (int i=tw_start-1;i>=0;--i)
+    {
+        if (offwtrace.size()<offwtrace_length)
+        {
+            offwtrace.push_back(trace[i]);
+        }
+        else
+        {
+            break;
+        }
+    }
+    
+    //if enough waveform not available before ontimewindow, then go to after
+    for (int i=tw_stop+1;i<trace.size();++i)
+    {
+        if (offwtrace.size()<offwtrace_length)
+        {
+            offwtrace.push_back(trace[i]);
+        }
+        else
+        {
+            break;
+        }
+    }
+    
+    baseline = 1.0* std::accumulate(offwtrace.begin(),offwtrace.end(),0);
+    baseline /= offwtrace.size()*1.0;
+    
+    offw_std=0.0;
+    for (int i=0; i<offwtrace.size(); ++i)
+        offw_std += std::pow(offwtrace[i]*1.0 - baseline,2);
+    offw_std /= offwtrace.size();
+    offw_std = std::sqrt(offw_std);
+    
+    if (onwtrace.size()>161 || onwtrace.size()<159)
+        std::cout << "on/off trace size" << onwtrace.size() << " " << offwtrace.size() << std::endl;
+    
+    integrated_counts=0.0;
+    for (int i=0;i<onwtrace.size();++i) integrated_counts+=(onwtrace[i]-baseline);
+    
+    corrected_peak = raw_peak+offset - baseline;
+    
 }
 
 void Time_Average_From_Circ_Buffer(const boost::circular_buffer<float>& main_buffer,

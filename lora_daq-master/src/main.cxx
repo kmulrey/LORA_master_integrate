@@ -35,7 +35,7 @@ OPERATIONS lora_daq;
 
     lora_daq.Interpret_And_Store_Incoming_Msgs();
 
-   // lora_daq.Check_Coinc_Store_Event_Send_LOFAR_Trigger(!stay_in_loop);
+    lora_daq.Check_Coinc_Store_Event_Send_LOFAR_Trigger(!stay_in_loop);
 
    // lora_daq.Reset_Thresh_Store_Log();
 
