@@ -986,7 +986,7 @@ void LORA_STATION_V2::Print_Detectors_Diagnostics(const std::string& diagnostics
                                         const DETECTOR_CONFIG& dcfg,
                                         const tm& rs_time)
 {
-    /*
+    
   std::ofstream outfile;
   std::tm *t = Get_Current_Time();
   unsigned int GPS_time_stamp=(unsigned int)timegm(t) ;
@@ -1044,7 +1044,7 @@ void LORA_STATION_V2::Print_Detectors_Diagnostics(const std::string& diagnostics
   }
 
   outfile.close();
- */
+ 
   return;
 }
 

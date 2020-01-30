@@ -586,7 +586,7 @@ void OPERATIONS::Store_Event(const tvec_EVENT_SPOOL_SUMMARY& event,
   for (int i=0;i<network_config.size();++i)
   {
     //FIXIT : for clientv2, please add lines later.
-    if (network_config[i].type!="clientv1") continue;
+   // if (network_config[i].type!="clientv1") continue; //katie
 
     //initiate a station container.
     tEvent_Data_Station temp_station_data;
@@ -711,7 +711,7 @@ void OPERATIONS::Store_OSM()
   for (int i=0;i<network_config.size();++i)
   {
     //FIXIT : for clientv2, please add lines later.
-    if (network_config[i].type!="clientv1") continue;
+    //if (network_config[i].type!="clientv1") continue; //katie
 
     //initialize empty osm containers
     ONE_SEC_STRUCTURE temp_osm[2]; //master and slave

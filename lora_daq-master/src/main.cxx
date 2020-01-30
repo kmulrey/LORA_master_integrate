@@ -37,17 +37,17 @@ OPERATIONS lora_daq;
 
     lora_daq.Check_Coinc_Store_Event_Send_LOFAR_Trigger(!stay_in_loop);
 
-   // lora_daq.Reset_Thresh_Store_Log();
+    lora_daq.Reset_Thresh_Store_Log();
 
-   // lora_daq.Store_OSM();
+    lora_daq.Store_OSM();
 
-   // lora_daq.Periodic_Store_Log();
+    lora_daq.Periodic_Store_Log();
 
-   // lora_daq.Print_Detectors_Diagnostics();
+    lora_daq.Print_Detectors_Diagnostics();
 
-   // lora_daq.Save_Output_Files_At_Designated_Hour();
+    lora_daq.Save_Output_Files_At_Designated_Hour();
 
-   // lora_daq.Status_Monitoring();
+    //lora_daq.Status_Monitoring();
 
     if (!lora_daq.Is_DAQ_Execution_Status_True())
     {
