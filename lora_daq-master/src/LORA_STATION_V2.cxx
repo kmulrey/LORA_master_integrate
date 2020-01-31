@@ -239,7 +239,7 @@ int LORA_STATION_V2::Accept(fd_set& fd_list)
   }
   return n_accepted_connections;
     
-    return 0;
+    //return 0;
 }
 
 void LORA_STATION_V2::Listen(fd_set& fd_list)
