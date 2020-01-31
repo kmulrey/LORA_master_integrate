@@ -23,7 +23,7 @@
 # output_save_hour: hour of the day when current o/p files are closed and new ones opened.
 # tbb_dump_wait_min: min interval between two consecutive radio triggers.
 #active_stations   lasa1 lasa2 lasa3 lasa4 lasa5
-active_stations   lasa9
+active_stations   lasa6
 
 calibration_mode    0
 list_of_dets_for_calib

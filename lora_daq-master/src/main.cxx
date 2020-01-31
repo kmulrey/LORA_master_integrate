@@ -20,7 +20,7 @@ OPERATIONS lora_daq;
   //sleep(1);//katie
   //std::cout<<"Connected to stations"; //katie
   lora_daq.Accept_Connections_From_Stations();
-  //std::cout<<"accepted connection from stations"; //katie
+  std::cout<<"accepted connection from stations"; //katie
 
   
   lora_daq.Send_Control_Params();

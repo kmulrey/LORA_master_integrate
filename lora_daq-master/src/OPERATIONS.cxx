@@ -479,22 +479,18 @@ void OPERATIONS::Check_Coinc_Store_Event_Send_LOFAR_Trigger(const bool& daq_endi
       std::cout<<"~~~~~~LORA EVENT SAVED~~~~~~\n";
       Store_Event(event, uniq_statns, lofar_trig_satisfied);
       }
-     Print_Array_Diagnostics(event,n_detectors,uniq_statns.size(),lora_trig_satisfied, lofar_trig_satisfied, trigg_sent);
-      printf("check A\n");
+     //Print_Array_Diagnostics(event,n_detectors,uniq_statns.size(),lora_trig_satisfied, lofar_trig_satisfied, trigg_sent);
+     
     for (int i=0; i<lora_array_ptrs.size(); ++i)
      lora_array_ptrs[i]->Discard_Events_From_Spool(event);
-    printf("check B\n");
 
     //Collect all hit information from all stations.
     all_hits.clear();
-      printf("check C\n");
 
     for (int i=0; i<lora_array_ptrs.size(); ++i)
       lora_array_ptrs[i]->Send_Event_Spool_Info(all_hits);
-      printf("check D\n");
 
     all_hits_size=all_hits.size();
-      printf("check E\n");
 
    }
    
@@ -531,37 +527,27 @@ void OPERATIONS::Print_Array_Diagnostics(const tvec_EVENT_SPOOL_SUMMARY& event,
 
   for (int i=0; i<event.size(); ++i)
   {
-    printf("----- i = %d -----\n",i);
 
-    printf("check 1\n");
     total_charge+=event[i].charge;
       
-    printf("check 2\n");
     int j=Get_Detector_Number(event[i].station_no,event[i].evtspool_i);
-    printf("detector number ***  %d  ***\n",j);
 
-    printf("check 3\n");
     charges[j-1]=event[i].charge;
       
-    printf("check 4\n");
     peaks[j-1]=event[i].corrected_peak;
       
-    printf("check 5\n");
     core_position_x+=det_coord_x[j-1]*event[i].charge;
       
-    printf("check 6\n");
     core_position_y+=det_coord_y[j-1]*event[i].charge;
       
-    printf("check 7\n");
 
   }
-    printf("out\n");
 
-/*
+
   core_position_x /= total_charge;
   core_position_y /= total_charge;
-     */
-/*
+    
+
   outfile << event[0].GPS_time_stamp
   << "\t" << event[0].nsec
   << "\t" << n_detectors
@@ -586,7 +572,7 @@ void OPERATIONS::Print_Array_Diagnostics(const tvec_EVENT_SPOOL_SUMMARY& event,
   outfile << std::endl;
 
   outfile.close();
-    */
+    
 }
 
 void OPERATIONS::Store_Event(const tvec_EVENT_SPOOL_SUMMARY& event,
