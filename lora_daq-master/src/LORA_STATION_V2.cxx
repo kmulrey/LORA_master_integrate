@@ -547,7 +547,6 @@ void LORA_STATION_V2::Close()
     //std::cout<<"check 4\n";
 
   sleep(2);
-/*   //katie, not using screens for now
   std::stringstream command;
   //run the command on the detached screen session:
 	command << "screen -S LORA" << station_no
@@ -555,7 +554,7 @@ void LORA_STATION_V2::Close()
 
   std::cout << "Ending screen session: LORA" << station_no << std::endl;
 	system(command.str().c_str());
- */
+ 
   sleep(1);
     
 }
