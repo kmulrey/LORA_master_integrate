@@ -504,8 +504,8 @@ void OPERATIONS::Print_Array_Diagnostics(const tvec_EVENT_SPOOL_SUMMARY& event,
                                          const int& lofar_trig_satisfied,
                                          const unsigned int& trigg_sent)
 {
-  //std::ofstream outfile;
-  //outfile.open(output_array_log_filename,std::fstream::app);
+  std::ofstream outfile;
+  outfile.open(output_array_log_filename,std::fstream::app);
 
   float total_charge=0;
   float core_position_x=0;
