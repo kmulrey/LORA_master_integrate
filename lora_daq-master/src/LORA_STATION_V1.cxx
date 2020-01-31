@@ -106,7 +106,7 @@ void LORA_STATION_V1::Open()
     std::unique_ptr<SOCKET_CALLS> temp_ptr(new SOCKET_CALLS(host_ip, port[i],
                                               set_fd_to_nonblock));
     socket[i] = std::move(temp_ptr);
-    socket[i]->Open();
+    socket[i]->Open(1);
     socket[i]->Bind();
     socket[i]->Listen();
     //socket[i]->Accept();

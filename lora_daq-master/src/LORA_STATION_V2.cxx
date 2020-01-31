@@ -118,7 +118,7 @@ void LORA_STATION_V2::Open()
                                               set_fd_to_nonblock));
     std::cout<<"host_ip: "<<host_ip<<"  port: "<<port[i]<<"\n";
     socket[i] = std::move(temp_ptr);
-    socket[i]->Open();
+    socket[i]->Open(2);
     socket[i]->Bind();
 
 
@@ -586,11 +586,11 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
   unsigned char header = (unsigned char) msg[0];
   unsigned char identifier_bit = (unsigned char) msg[1] ;
   unsigned short byte_count = msg[3]<<8 | msg[2] ;
-  std::cout<<"byte count "<<byte_count<<"\n";
+ // std::cout<<"byte count "<<byte_count<<"\n";
 
   uint16_t trigger_pattern = (unsigned char) msg[5]<<8 | msg[4] ;
     
-  std::cout<<"trigger pattern "<<std::bitset<16> (trigger_pattern)<<"\n";
+  //std::cout<<"trigger pattern "<<std::bitset<16> (trigger_pattern)<<"\n";
 
 
     
@@ -633,8 +633,7 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
     
   printf("looking for list2: %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x %x \n",msg[54],msg[55],msg[56],msg[57],msg[58],msg[59],msg[60],msg[61],msg[62],msg[63],msg[64],msg[65],msg[66],msg[67],msg[68],msg[69]);
     
-  unsigned short first_adc = msg[71]<<8 | msg[70] ;
-  std::cout<<"first_adc: "<<first_adc<<"\n";
+
 
     
    int istart=70;
