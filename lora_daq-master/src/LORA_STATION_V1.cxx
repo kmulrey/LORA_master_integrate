@@ -604,7 +604,7 @@ void LORA_STATION_V1::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
   //its a LORA_STATION_V1 member.
 	unsigned int nsec=(unsigned int)((1.0*CTD/current_CTP[m_or_s_int])*(1000000000)) ;
   //This relation is not exact.
-    printf("ns timing:   %d   %d   %d",CTD,current_CTP,nsec);
+    printf("ns timing:   %d   %d   %d\n",CTD,current_CTP,nsec);
 
   //-----------xxx--------------
   tm t; t.tm_sec=sec ; t.tm_min=min ;
