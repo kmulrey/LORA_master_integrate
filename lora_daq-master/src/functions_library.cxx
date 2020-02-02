@@ -94,7 +94,7 @@ unsigned int Get_Detector_NumberV2(std::string sta_name, int channel)
     if(sta_name=="lasa7"){x=7;}
     if(sta_name=="lasa8"){x=8;}
     if(sta_name=="lasa9"){x=9;}
-    if(sta_name=="lasa0"){x=10;}
+    if(sta_name=="lasa10"){x=10;}
     
     unsigned int detno=(x-1)*4+channel+1;
 

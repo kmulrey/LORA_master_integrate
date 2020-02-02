@@ -1,5 +1,5 @@
 #!/bin/bash
 echo "Start LORA $1"
-
-ssh root@lora$1 "/root/test/main"
+sleep 10
+ssh root@lora$1 "cd /root/test/ && ./main"
 
