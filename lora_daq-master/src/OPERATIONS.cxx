@@ -1390,7 +1390,7 @@ void OPERATIONS::Open_ROOT_File()
                    "GPS_Time_Stamp/i");
   tree_sec->Branch("Sync_Error", &rootfile_osm_platform.sync,"Sync_Error/l");
   tree_sec->Branch("Quant_Error", &rootfile_osm_platform.quant,"Quant_Error/F");
-  tree_sec->Branch("CTP", &rootfile_osm_platform.CTP, "CTP/l");
+  tree_sec->Branch("CTP", &rootfile_osm_platform.CTP, "CTP/i");
   tree_sec->Branch("Channel_1_Thres_Count_High",
                   &rootfile_osm_platform.Channel_1_Thres_count_high,
                   "Channel_1_Thres_Count_High/s");
@@ -1425,7 +1425,7 @@ void OPERATIONS::Open_ROOT_File()
   tree_event->Branch("GPS_Time_Stamp", &rootfile_event_platform.GPS_time_stamp,
                      "GPS_Time_Stamp/i");
   tree_event->Branch("CTD", &rootfile_event_platform.CTD,
-                     "CTD/l");
+                     "CTD/i");
   tree_event->Branch("nsec_Online", &rootfile_event_platform.nsec,
                      "nsec_Online/i");
   tree_event->Branch("Event_Id", &rootfile_event_platform.Event_id,
