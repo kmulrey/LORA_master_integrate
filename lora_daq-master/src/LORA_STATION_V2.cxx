@@ -777,7 +777,6 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
     unsigned short status_elec = msg[11] ;
     unsigned long CTP = (msg[15] & 0x7F)<<24 | msg[14]<<16 | msg[13]<<8 | msg[12] ;
     unsigned short sync =(msg[15] & 0x80)>>7;
-    printf("~*~*~*~*~*~*~  V2 CTP update %u %lu\n",CTP,CTP);
     float quant = (msg[19]& 0x7F)<<24 | msg[18]<<16 | msg[17]<<8 | msg[16] ;
     
     unsigned short UTC_offset = msg[21]<<8 | msg[20] ; //Time(UTC) = Time (GPS) - UTC_offset
@@ -815,6 +814,7 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
     osm.sync=sync;
     osm.trigger_rate=trigger_rate;
     osm.UTC_offset=UTC_offset;
+    printf("~*~*~*~*~*~*~  V2 CTP update %u %lu\n",osm.CTP,osm.CTP);
 
 
     tm t; t.tm_sec=sec ; t.tm_min=min ;
