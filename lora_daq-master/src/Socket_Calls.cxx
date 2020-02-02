@@ -110,7 +110,7 @@ SOCKET_CALLS::SOCKET_CALLS(const std::string& m_name, const std::string& m_port,
 }
 
 
-void SOCKET_CALLS::Open(int v)
+void SOCKET_CALLS::Open()
 {
   /*
   Generates a socket file descriptor.
@@ -120,12 +120,9 @@ void SOCKET_CALLS::Open(int v)
   All socket file descriptors are set to non blocking mode to allow
   for repeated reading from same socket until EWOULDBLOCK is returned in errno by read().
   */
-    if(v==1){
-      sc_init_sockfd = socket(sc_addr.ai_family, sc_addr.ai_socktype, sc_addr.ai_protocol);
-    }
-    if(v==2){
-        sc_init_sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    }
+  
+   sc_init_sockfd = socket(sc_addr.ai_family, sc_addr.ai_socktype, sc_addr.ai_protocol);
+   
   if (sc_init_sockfd==-1)
   {
           std::string errormsg="Open() says: socket() fails. this shouldn't have happened. SOCKET_CALLS() constructor checks for this!";

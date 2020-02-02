@@ -51,7 +51,7 @@ public:
   SOCKET_CALLS(const std::string&, const std::string&, bool);
 
   //Methods For Clients and Servers
-  void Open(int);
+  void Open();
   int Receive(unsigned char*, size_t, int&, bool); //give references to data buffer (to store o/p from this method) & size of msg received (to store o/p from this method) & an int to hold errno given by read() method.
   void Send(const unsigned char*, size_t, int&, bool); //give references to data (as i/p to this method) and size of sent msg(to store o/p from method).
   void Close();

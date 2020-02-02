@@ -118,7 +118,7 @@ void LORA_STATION_V2::Open()
                                               set_fd_to_nonblock));
     std::cout<<"host_ip: "<<host_ip<<"  port: "<<port[i]<<"\n";
     socket[i] = std::move(temp_ptr);
-    socket[i]->Open(2);
+    socket[i]->Open();
     socket[i]->Bind();
 
 
