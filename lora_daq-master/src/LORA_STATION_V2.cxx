@@ -294,7 +294,7 @@ void LORA_STATION_V2::Interpret_And_Store_Incoming_Msgs(tm& rs_time)
       {
           std::cout<<"found one sec\n";
           Unpack_OSM_Msg_Store_To_Spool(msg, im_or_s, rs_time); //Store
-       // Update_current_CTP(im_or_s); //after each OSM. Clock is separate for Master and Slave. //hershal
+          Update_current_CTP(im_or_s); //after each OSM. Clock is separate for Master and Slave. //hershal
       }
       else if (msg[1]==event_msg_bit) //Interpret
       {
@@ -824,7 +824,7 @@ void LORA_STATION_V2::Unpack_OSM_Msg_Store_To_Spool(const std::vector<unsigned c
    //GPS_time_stamp + 1 because LORA clock is behind 1 second. see old daq.
     osm.GPS_time_stamp+=1;
 
-    printf("~*~*~*~*~*~*~  V2 CTP update %u %du\n",osm.CTP,osm.CTP);
+    printf("~*~*~*~*~*~*~  V2 CTP update %u %d\n",osm.CTP,osm.CTP);
 
 
   osm.Master_or_Slave=m_or_s;
