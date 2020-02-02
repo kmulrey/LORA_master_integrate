@@ -208,50 +208,67 @@ void OPERATIONS::Send_Control_Params()
 
 void OPERATIONS::Accept_Connections_From_Stations()
 {
-  int n_stations = detector_config.active_stations.size();
-  //FIXIT: the number of connections for clientv2 will be different.
-  //int n_connections = n_stations * 2 * 2 ; // 2:master/slave, 2:spares
-  int n_connections = n_stations * 2 ; // 2:master/slave, 2:spares //katie
-  int n_accepted_connections=0;
-
-  while(n_accepted_connections<n_connections)
-  {
-    sleep(1);
-    int max_fd_val=0;
-    int n_fds_ready=0;
-    fd_set active_stations_fds;
-    struct timeval timeout, waittime;
-    timeout.tv_sec =0; timeout.tv_usec = 10*1000; // 10 ms
-
-    //Collect list of file descriptors for active stations
-    FD_ZERO(&active_stations_fds);
-    for (int i=0; i<lora_array_ptrs.size(); ++i)
+    int n_connections = 0 ;
+    
+    for (int i=0; i<network_config.size();i++)
     {
-      lora_array_ptrs[i]->Add_readfds_To_List(active_stations_fds,max_fd_val);
+        //check if this station
+        //was present in list of active_stations in detector_config
+        auto vec = detector_config.active_stations;
+        auto station_is_active = std::find(vec.begin(), vec.end(), network_config[i].name)!= vec.end();
+        if (!station_is_active) continue;//if not , skip it.
+        
+        if (network_config[i].type=="clientv1")
+        {
+            n_connections+=4;
+        }
+        else if (network_config[i].type=="clientv2")
+        {
+            n_connections+=2;
+        }
     }
-
-    // wait till one of them is ready for reading or until timeout.
-    n_fds_ready = select(max_fd_val+1, &active_stations_fds, NULL, NULL, &timeout);
-    if (n_fds_ready<0)
-    {//if select() throws an error:
-      //printf("line: %d in: %s\n", __LINE__, __FILE__);
-
-      std::string errormsg = "Error from select() under";
-      errormsg+= " OPERATIONS::Listen_To_Stations(). ";
-      errormsg+= std::string(std::strerror(errno));
-      std::cout << errormsg << std::endl;
-      self_execution_status=false;
-    }
-
-    if (n_fds_ready==0) continue;
-
-    for (int i=0; i<lora_array_ptrs.size(); ++i)
+    
+    int n_accepted_connections=0;
+    
+    while(n_accepted_connections<n_connections)
     {
-      n_accepted_connections+= lora_array_ptrs[i]->Accept(active_stations_fds);
+        sleep(1);
+        int max_fd_val=0;
+        int n_fds_ready=0;
+        fd_set active_stations_fds;
+        struct timeval timeout, waittime;
+        timeout.tv_sec =0; timeout.tv_usec = 10*1000; // 10 ms
+        
+        //Collect list of file descriptors for active stations
+        FD_ZERO(&active_stations_fds);
+        for (int i=0; i<lora_array_ptrs.size(); ++i)
+        {
+            lora_array_ptrs[i]->Add_readfds_To_List(active_stations_fds,max_fd_val);
+        }
+        
+        // wait till one of them is ready for reading or until timeout.
+        n_fds_ready = select(max_fd_val+1, &active_stations_fds, NULL, NULL, &timeout);
+        
+        if (n_fds_ready<0)
+        {//if select() throws an error:
+            //printf("line: %d in: %s\n", __LINE__, __FILE__);
+            std::string errormsg = "Error from select() under";
+            errormsg+= " OPERATIONS::Listen_To_Stations(). ";
+            errormsg+= std::string(std::strerror(errno));
+            std::cout << errormsg << std::endl;
+            self_execution_status=false;
+        }
+        
+        if (n_fds_ready==0) continue;
+        
+        for (int i=0; i<lora_array_ptrs.size(); ++i)
+        {
+            n_accepted_connections+= lora_array_ptrs[i]->Accept(active_stations_fds);
+        }
+        
+        std::cout << "accepted # connections: " << n_accepted_connections << std::endl;
     }
-
-  }
-  return;
+    return;
 }
 
 void OPERATIONS::Listen_To_Stations()
