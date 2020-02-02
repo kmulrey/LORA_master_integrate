@@ -656,6 +656,7 @@ void OPERATIONS::Store_Event(const tvec_EVENT_SPOOL_SUMMARY& event,
     for (int k=0; k<temp_station_data.size(); ++k)
     {
       rootfile_event_platform=temp_station_data[k];
+        
       tree_event->Fill();
     }
   }

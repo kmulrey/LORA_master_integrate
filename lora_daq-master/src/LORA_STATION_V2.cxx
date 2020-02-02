@@ -671,16 +671,17 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
     
   
   unsigned int Trigg_condition= Control_Mode_Messages[10];
-
+  
   
 	unsigned int nsec=(unsigned int)((1.0*CTD/current_CTP[m_or_s_int])*(1000000000)) ;
+    printf("ns timing:   %d   %d   %d",CTD,current_CTP,nsec);
 
   //-----------xxx--------------
    tm t; t.tm_sec=sec ; t.tm_min=min ;
 	t.tm_hour=hour ; t.tm_mday=day ;
 	t.tm_mon=month -1 ; t.tm_year=year-1900 ;
   //Because GPS month starts from 1 while in 'tm' struct, it starts from 0.
-	unsigned int GPS_time_stamp=(unsigned int)timegm(&t) ;
+	unsigned int GPS_time_stamp=(unsigned int)timegm(&t);
     
 
     
@@ -694,7 +695,7 @@ void LORA_STATION_V2::Unpack_Event_Msg_Store_To_Spool(const std::vector<unsigned
     event[i].detector = detno ;
     event[i].YMD = year*10000 + month*100 + day ;
     //GPS_time_stamp + 1 because LORA clock is behind 1 second. see old daq.
-  	event[i].GPS_time_stamp = GPS_time_stamp +1 ; //maybe 18 seconds off?
+  	event[i].GPS_time_stamp = GPS_time_stamp +1 -18; //maybe 18 seconds off?
   	event[i].CTD = CTD;
   	event[i].nsec = nsec;
   	event[i].Trigg_condition = Trigg_condition;
