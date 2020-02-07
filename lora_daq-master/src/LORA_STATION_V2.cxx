@@ -98,17 +98,18 @@ void LORA_STATION_V2::Open()
   std::stringstream command, command2;
   //https://serverfault.com/questions/104668/create-screen-and-run-command-without-attaching
   //create a detached screen session:
-    
+    /*
   command2 << "screen -dmS LORA" << station_no;
   system(command2.str().c_str());
 
   //run the command on the detached screen session:
+    
 	command << "screen -S LORA" << station_no
           << " -X stuff 'sh ../daq_managers/start_stations_v2.sh " << station_no << " \n'";
 
 	std::cout << "Now starting LORA" << station_no << std::endl;
 	system(command.str().c_str());
-  
+  */
   for (int i=0;i<2;i++) //loop for master, slave. //katie-> loop over 1, only one socket
   {
     bool set_fd_to_nonblock = true;
@@ -1049,8 +1050,8 @@ void LORA_STATION_V2::Print_Detectors_Diagnostics(const std::string& diagnostics
 
 void LORA_STATION_V2::Set_New_Threshold()
 {
-    /*
-  for (int i=0; i<2; ++i)
+  /*
+  for (int i=0; i<1; ++i)//katie
   {
     std::cout << name << ", " << i << ": " << current_threshold_ADC[0+2*i] << " "
     << current_threshold_ADC[1+2*i] << std::endl;
