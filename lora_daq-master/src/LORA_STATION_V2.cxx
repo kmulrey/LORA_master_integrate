@@ -98,7 +98,7 @@ void LORA_STATION_V2::Open()
   std::stringstream command, command2;
   //https://serverfault.com/questions/104668/create-screen-and-run-command-without-attaching
   //create a detached screen session:
-    /*
+    
   command2 << "screen -dmS LORA" << station_no;
   system(command2.str().c_str());
 
@@ -109,7 +109,7 @@ void LORA_STATION_V2::Open()
 
 	std::cout << "Now starting LORA" << station_no << std::endl;
 	system(command.str().c_str());
-  */
+  
   for (int i=0;i<2;i++) //loop for master, slave. //katie-> loop over 1, only one socket
   {
     bool set_fd_to_nonblock = true;
